@@ -6,26 +6,24 @@ export default class requestContainer {
         this.options = options
     }
 
-    dsqdsq(VueLocal, url){
-        VueLocal.$store.commit('SET_LOADING', true)
-        return new Promise((resolve, reject) => {
-            axios.get(url).then(() => {
-              resolve()
-            }).catch(() =>{
-              reject()
-            }).then(() => {
-                VueLocal.$store.commit('SET_LOADING', false)
-            })
-       })
-    }
-
-    get(VueLocal, url, params = {}) {
+    get(VueLocal, url, options) {
         var params = {}
+        if (options.with_auth) {
+            var user_token = VueLocal.$cookie.get('user_token')
+            var headers = {
+                'Authorization': 'Bearer ' + user_token
+            }
+        } else {
+            var headers = {}
+        }
+        var params = merge(this.options.params, {
+            headers: headers
+        })
         return new Promise((resolve, reject) => {
             VueLocal.$store.commit('SET_LOADING', true)
-            axios.get(this.options.rootUrl + url)
+            axios.get(this.options.rootUrl + url, params)
                 .then((response) => {
-                    if (_params.loading_persit == false || _params.loading_persit == undefined) {
+                    if (options.loading_persit == false || options.loading_persit == undefined) {
                         VueLocal.$store.commit('SET_LOADING', false)
                     }
                     resolve(response)
@@ -33,19 +31,18 @@ export default class requestContainer {
                 .catch((error) => {
                     //add 1 error
                     VueLocal.$store.commit('ADD_HTTP_API_ERROR')
-                    console.log(VueLocal.$store.state.http_api_error)
                     if (VueLocal.$store.state.http_api_error > 2) {
                         VueLocal.$store.commit('SET_LOADING', false)
-                        VueLocal.$store.commit('SET_HTTP_API_ERROR', 0)
-                        if (_params.alert_on_error == undefined || _params.alert_on_error == true) {
+                        if (options.alert_on_error == undefined || options.alert_on_error == true) {
                             VueLocal.$store.commit('ADD_ALERT', {
-                                type: VueLocal.$t('api.error.title'),
-                                text: VueLocal.$t('api.error.description')
+                                color: 'error',
+                                text: "Nan mais please..."
                             })
                         }
+                        VueLocal.$store.commit('SET_HTTP_API_ERROR', 0)
                         reject(error)
                     } else {
-                        this.get(VueLocal, url, params).then(resolve).catch(reject)
+                        this.get(VueLocal, url, options).then(resolve).catch(reject)
                     }
                 })
         });

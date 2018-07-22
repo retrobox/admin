@@ -28,17 +28,15 @@
         },
         methods: {
             onMounted: function () {
-              axios.get(process.env.API_ENDPOINT + "/account/info", {
-                headers: {
-                  'Authorization': 'Bearer ' + this.$cookie.get('user_token')
-                }
-              }).then((response) => {
+              this.$apitator.get(this, '/account/info', {with_auth: true, alert_on_error: false})
+              .then((response) => {
                   if (!response.data.data.user.is_admin) {
                       this.error = 'not-admin'
                   }else{
                     this.$router.push({name: 'Dashboard'})
                   }
               }).catch((error) => {
+                console.log(error);
                 if (error.response) {
                   if (error.response.status == 401) {
                     this.error = 'not-logged'
