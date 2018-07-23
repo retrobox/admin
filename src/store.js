@@ -37,13 +37,8 @@ export const store = new Vuex.Store({
                 indexRoute: { name: "Users" }
             },
             {
-                title: "Shop Items",
+                title: "Shop",
                 icon: "shopping_cart",
-                indexRoute: { name: "ShopItems" }
-            },
-            {
-                title: "Shop Categories",
-                icon: "view_list",
                 indexRoute: { name: "ShopCategories" }
             }
         ]
