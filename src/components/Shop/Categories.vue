@@ -20,7 +20,7 @@
         <span v-bind:class="{'font-weight-bold': props.item.is_admin}">{{ props.item.title }}</span>
       </td>
       <td>
-        <flag :iso="props.item.flag" /></td>
+        <flag :iso="props.item.locale | flag" /></td>
       <td class="justify-center align-center layout px-0">
           <v-btn
           icon
@@ -114,7 +114,7 @@
 
                     <v-list-tile-content>
                       <v-list-tile-title>
-                        <flag :iso="viewCategory.flag" />
+                        <flag :iso="viewCategory.locale | flag" />
                       </v-list-tile-title>
                       <v-list-tile-sub-title>Locale</v-list-tile-sub-title>
                     </v-list-tile-content>
@@ -197,24 +197,8 @@
                       query:`query{getManyShopCategories{id,locale,created_at,updated_at,title,is_customizable}}`
                     }
                 }).then((response) => {
-                    this.categories = this.mapFlags(response.data.data.getManyShopCategories)
+                    this.categories = response.data.data.getManyShopCategories
                 })
-            },
-            mapFlags: function (val) {
-              if (!Array.isArray(val)) {
-                val = [val]
-              }
-              return val.map((item) => {
-                switch (item.locale) {
-                  case 'en':
-                    item.flag = 'gb'
-                    break;
-
-                  default:
-                    item.flag = item.locale
-                }
-                return item
-              })
             },
             viewItem (item) {
               this.$apitator.query(this, {
@@ -226,7 +210,7 @@
                   }
               }).then((response) => {
                   this.viewDialog = true
-                  this.viewCategory = this.mapFlags(response.data.data.getOneShopCategory)[0]
+                  this.viewCategory = response.data.data.getOneShopCategory
               })
             },
             deleteCategory () {
