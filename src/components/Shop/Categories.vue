@@ -42,6 +42,26 @@
               view_list
             </v-icon>
           </v-btn>
+          <v-btn
+          icon
+          small
+          @click="$router.push({name: 'ShopCategoryEdit', params: {id: props.item.id}})">
+            <v-icon
+            small
+            >
+              edit
+            </v-icon>
+          </v-btn>
+          <v-btn
+          icon
+          small
+          @click="deleteCategoryDialog = true; toDeleteCategory = props.item">
+            <v-icon
+            small
+            >
+              delete
+            </v-icon>
+          </v-btn>
         </td>
     </template>
   </v-data-table>
@@ -128,6 +148,17 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
+      <v-dialog v-model="deleteCategoryDialog" max-width="500px">
+            <v-card>
+              <v-card-title>
+                  Really want to delete "{{toDeleteCategory.title}}" ?
+              </v-card-title>
+              <v-card-actions>
+                <v-btn color="primary" flat @click.stop="deleteCategoryDialog=false">Close</v-btn>
+                  <v-btn color="red" flat @click.stop="deleteCategory()">Delete</v-btn>
+              </v-card-actions>
+            </v-card>
+        </v-dialog>
   </div>
 </template>
 
@@ -152,6 +183,8 @@
                   value: 'locale'
                 }
               ],
+              deleteCategoryDialog: false,
+              toDeleteCategory: ""
             }
         },
         methods: {
@@ -194,6 +227,23 @@
               }).then((response) => {
                   this.viewDialog = true
                   this.viewCategory = this.mapFlags(response.data.data.getOneShopCategory)[0]
+              })
+            },
+            deleteCategory () {
+              this.deleteCategoryDialog = false
+              this.$apitator.query(this, {
+                  body: {
+                    query:`mutation($id: String!){destroyShopCategory(id: $id)}`,
+                    variables: {
+                      id: this.toDeleteCategory.id
+                    }
+                  }
+              }).then((response) => {
+                this.$store.commit('ADD_ALERT', {
+                  color: 'info',
+                  text: 'Deleted a category!'
+                })
+                this.fetchData()
               })
             }
         },
