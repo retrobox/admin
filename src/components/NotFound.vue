@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-content>
-      <v-container fill-height mt-5>
+      <v-container fill-height>
         <v-layout
                 justify-center
                 align-center
@@ -15,4 +15,10 @@
     </v-content>
   </div>
 </template>
-
+<script>
+export default {
+  created(){
+    this.$store.commit('SET_LAYOUT', 'center')
+  }
+}
+</script>
