@@ -2,14 +2,14 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import App from './App'
-import router from './router'
+import CreateUpdate from './components/CreateUpdate.vue'
+import router from './router.js'
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
 import {store} from './store'
 import VueApitator from './apitator'
 import FlagIcon from 'vue-flag-icon'
 import Vuelidate from 'vuelidate'
-import moment from 'moment'
 import mavonEditor from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
 
@@ -30,9 +30,6 @@ Vue.use(VueApitator, {
 
 Vue.config.productionTip = false
 
-Vue.filter('humanizeMoment', function (datetime) {
-  return moment(datetime).fromNow()
-})
 Vue.filter('flag', function (value) {
   var flag = ""
   switch (value) {
@@ -45,6 +42,7 @@ Vue.filter('flag', function (value) {
   }
   return flag
 })
+Vue.component('create-update', CreateUpdate)
 
 /* eslint-disable no-new */
 new Vue({
