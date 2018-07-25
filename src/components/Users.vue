@@ -18,7 +18,7 @@
         <span v-bind:class="{'font-weight-bold': props.item.is_admin}">{{ props.item.last_username }}</span>
       </td>
       <td>{{ props.item.last_email }}</td>
-      <td class="justify-center align-center layout px-0">
+      <td class="justify-end align-center layout px-2">
           <v-btn
           icon
           small
@@ -186,7 +186,8 @@ export default {
           align: 'left',
           sortable: false,
           value: 'last_email'
-        }
+        },
+        { text: 'Actions', value: 'id', sortable: false, align: 'right' }
       ],
     }
   },

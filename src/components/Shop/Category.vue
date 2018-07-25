@@ -55,25 +55,7 @@
 
           <v-divider inset></v-divider>
 
-          <v-list-tile @click="">
-            <v-list-tile-action>
-              <v-icon>update</v-icon>
-            </v-list-tile-action>
-            <v-list-tile-content>
-              <v-list-tile-title>{{category.created_at}}</v-list-tile-title>
-              <v-list-tile-sub-title>Created at</v-list-tile-sub-title>
-            </v-list-tile-content>
-          </v-list-tile>
-
-          <v-list-tile @click="">
-            <v-list-tile-action>
-            </v-list-tile-action>
-
-            <v-list-tile-content>
-              <v-list-tile-title>{{category.updated_at}}</v-list-tile-title>
-              <v-list-tile-sub-title>Updated at</v-list-tile-sub-title>
-            </v-list-tile-content>
-          </v-list-tile>
+          <create-update :item="category" />
         </v-list>
       </v-card-text>
       <v-card-actions>
@@ -107,7 +89,7 @@
       <td>
         {{props.item.price}}
       </td>
-      <td class="justify-center align-center layout px-0">
+      <td class="justify-end align-center layout px-2">
           <v-btn
           icon
           small
@@ -121,7 +103,17 @@
           <v-btn
           icon
           small
-          @click="editItem(props.item)">
+          @click="$router.push({name: 'ShopItem', params: {id: props.item.id}})">
+            <v-icon
+            small
+            >
+              view_list
+            </v-icon>
+          </v-btn>
+          <v-btn
+          icon
+          small
+          @click="$router.push({name: 'ShopItemEdit', params: {id: props.item.id}})">
             <v-icon
             small
             >
@@ -230,29 +222,12 @@
 
           <v-divider inset></v-divider>
 
-          <v-list-tile>
-            <v-list-tile-action>
-              <v-icon>update</v-icon>
-            </v-list-tile-action>
-            <v-list-tile-content>
-              <v-list-tile-title>{{toViewItem.created_at | humanizeMoment}}</v-list-tile-title>
-              <v-list-tile-sub-title>Created at</v-list-tile-sub-title>
-            </v-list-tile-content>
-          </v-list-tile>
-
-          <v-list-tile>
-            <v-list-tile-action>
-            </v-list-tile-action>
-
-            <v-list-tile-content>
-              <v-list-tile-title>{{toViewItem.updated_at | humanizeMoment}}</v-list-tile-title>
-              <v-list-tile-sub-title>Updated at</v-list-tile-sub-title>
-            </v-list-tile-content>
-          </v-list-tile>
+          <create-update :item="toViewItem" />
         </v-list>
       </v-card-text>
       <v-card-actions>
-        <v-btn color="primary" flat @click.stop="viewDialog=false">Close</v-btn>
+        <v-btn color="red" flat @click.stop="viewDialog=false">Close</v-btn>
+        <v-btn color="primary" flat @click.stop="$router.push({name: 'ShopItem', params: {id: toViewItem.id}})">More details</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -282,7 +257,6 @@
 </template>
 
 <script>
-import moment from 'moment'
 export default {
   data() {
     return {
@@ -310,6 +284,12 @@ export default {
           align: 'left',
           sortable: false,
           value: 'price'
+        },
+        {
+          text: 'Actions',
+          align: 'right',
+          value: 'id',
+          sortable: false
         }
       ],
     }
@@ -328,8 +308,6 @@ export default {
         }
       }).then((response) => {
         this.category = response.data.data.getOneShopCategory
-        this.category.created_at = moment(this.category.created_at).fromNow()
-        this.category.updated_at = moment(this.category.updated_at).fromNow()
       })
     },
     viewItem(item) {

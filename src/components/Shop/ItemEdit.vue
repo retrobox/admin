@@ -1,5 +1,10 @@
 <template>
-  <div class="add-item">
+  <div class="edit-item">
+    <v-layout align-center justify-end row fill-height>
+      <v-btn icon @click="fetchData()">
+        <v-icon>refresh</v-icon>
+      </v-btn>
+    </v-layout>
     <v-card>
       <v-card-text>
         <form>
@@ -88,8 +93,12 @@
             @blur="$v.image.$touch()"
           ></v-text-field>
 
-          <v-layout class="my-4" justify-center align-center fill-height v-if="!$v.image.$invalid">
-            <img :src="image" />
+          <v-layout class="my-4" row wrap justify-center align-center fill-height v-if="!$v.image.$invalid">
+            <v-flex xs8 md6>
+              <v-card>
+                <v-card-media :src="image" height="200px"></v-card-media>
+              </v-card>
+            </v-flex>
           </v-layout>
 
           <!-- add many images -->
@@ -161,7 +170,8 @@
               price: 10.00,
               image: '',
               galery_images: [],
-              image_to_add: ""
+              image_to_add: "",
+              category: {}
             }
         },
         computed: {
@@ -226,16 +236,56 @@
           }
         },
         methods: {
+            fetchData: function () {
+              this.$apitator.query(this, {
+                body: {
+                  query: `query($id: String!){
+                    getOneShopItem(id: $id){
+                      id,
+                      description_short,
+                      description_long,
+                      title,
+                      price,
+                      weight,
+                      image,
+                      version,
+                      show_version,
+                      images{id, url, is_main},
+                      category{id, title, is_customizable}
+                    }
+                  }`,
+                  variables: {
+                    id: this.$route.params.id
+                  }
+                }
+              }).then((response) => {
+                var item = response.data.data.getOneShopItem
+                this.name = item.title
+                this.description_short = item.description_short
+                this.description_long = item.description_long
+                this.price = item.price
+                this.weight = item.weight
+                this.image = item.image
+                this.version = item.version
+                this.show_version = item.show_version
+                this.category = item.category
+                this.galery_images = item.images.map((item) => {
+                  return item.url
+                })
+              })
+            },
             onMounted: function() {
+              this.fetchData()
             },
             submit () {
               this.$v.$touch();
               if (!this.$v.$invalid) {
                   this.$apitator.query(this, {
                       body: {
-                        query:`mutation($item: ShopItemStoreInput!){storeShopItem(item: $item){id,saved}}`,
+                        query:`mutation($item: ShopItemUpdateInput!){updateShopItem(item: $item)}`,
                         variables: {
                           item: {
+                            id: this.$route.params.id,
                             title: this.name,
                             description_short: this.description_short,
                             description_long: this.description_long,
@@ -244,7 +294,7 @@
                             image: this.image,
                             version: this.version,
                             show_version: this.show_version,
-                            category_id: this.$route.params.id,
+                            category_id: this.category.id,
                             images: this.galery_images.map((item) => {
                               var is_main = this.galery_images.indexOf(item) == 0
                               return {url: item, is_main: is_main}})
@@ -254,9 +304,9 @@
                   }).then((response) => {
                     this.$store.commit('ADD_ALERT', {
                       color: 'success',
-                      text: 'Added a item!'
+                      text: 'Updated a item!'
                     })
-                    this.$router.push({name: 'ShopCategory', params: {id: this.$route.params.id}})
+                    this.$router.push({name: 'ShopItem', params: {id: this.$route.params.id}})
                   })
               }
             },
@@ -268,7 +318,7 @@
             }
         },
         created() {
-            this.$store.commit('SET_TITLE', 'Add a shop item')
+            this.$store.commit('SET_TITLE', 'Edit a shop item')
             this.$store.commit('SET_LAYOUT', 'dashboard')
         }
     }
