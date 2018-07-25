@@ -40,6 +40,11 @@ export const store = new Vuex.Store({
                 title: "Shop",
                 icon: "shopping_cart",
                 indexRoute: { name: "ShopCategories" }
+            },
+            {
+                title: "Games",
+                icon: "videogame_asset",
+                indexRoute: { name: "Games" }
             }
         ]
     },
