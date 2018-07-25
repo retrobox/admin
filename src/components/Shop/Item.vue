@@ -18,7 +18,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile @click="">
+        <v-list-tile @click="$copyText(item.id)" ripple>
           <v-list-tile-action />
           <v-list-tile-content>
             <v-list-tile-title>{{item.id}}</v-list-tile-title>

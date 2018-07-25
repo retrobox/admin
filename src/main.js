@@ -12,9 +12,10 @@ import FlagIcon from 'vue-flag-icon'
 import Vuelidate from 'vuelidate'
 import mavonEditor from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
-
+import VueClipboard from 'vue-clipboard2'
 var VueCookie = require('vue-cookie');
 
+Vue.use(VueClipboard)
 Vue.use(Vuelidate)
 Vue.use(FlagIcon);
 Vue.use(VueCookie);

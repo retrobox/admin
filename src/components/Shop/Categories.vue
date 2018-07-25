@@ -78,7 +78,7 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile @click="">
+          <v-list-tile @click="$copyText(viewCategory.id)" ripple>
             <v-list-tile-action />
             <v-list-tile-content>
               <v-list-tile-title>{{viewCategory.id}}</v-list-tile-title>

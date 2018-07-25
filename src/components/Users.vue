@@ -80,6 +80,7 @@
             </v-list-tile>
             <v-divider inset></v-divider>
           </div>
+
           <v-list-tile @click="">
             <v-list-tile-action>
               <v-icon>label</v-icon>
@@ -90,21 +91,22 @@
               <v-list-tile-sub-title>Last username</v-list-tile-sub-title>
             </v-list-tile-content>
           </v-list-tile>
-          <v-list-tile @click="">
-            <v-list-tile-action>
-            </v-list-tile-action>
+
+          <v-list-tile @click="$copyText(viewUser.id)" ripple>
+            <v-list-tile-action />
 
             <v-list-tile-content>
               <v-list-tile-title>{{viewUser.id}}</v-list-tile-title>
               <v-list-tile-sub-title>API Id</v-list-tile-sub-title>
             </v-list-tile-content>
           </v-list-tile>
+
           <v-divider inset></v-divider>
-          <v-list-tile @click="">
+
+          <v-list-tile @click="$copyText(viewUser.last_user_agent)" ripple>
             <v-list-tile-action>
               <v-icon>settings_applications</v-icon>
             </v-list-tile-action>
-
             <v-list-tile-content>
               <v-list-tile-title>{{viewUser.last_user_agent}}</v-list-tile-title>
               <v-list-tile-sub-title>Last user agent</v-list-tile-sub-title>
@@ -112,19 +114,40 @@
           </v-list-tile>
 
           <v-divider inset></v-divider>
+
           <v-list-tile @click="">
             <v-list-tile-action>
               <v-icon>https</v-icon>
             </v-list-tile-action>
-
             <v-list-tile-content>
               <v-list-tile-title>
-                <span v-if="viewUser.is_admin">Administrator</span>
+                <span v-if="viewUser.is_admin">
+                   Administrator
+                </span>
                 <span v-else>
-                        Not a administrator
-                      </span>
+                   Not a administrator
+                </span>
               </v-list-tile-title>
               <v-list-tile-sub-title>Is admin ?</v-list-tile-sub-title>
+            </v-list-tile-content>
+          </v-list-tile>
+
+          <v-divider inset></v-divider>
+
+          <v-list-tile @click="$copyText(viewUser.last_ip)" ripple>
+            <v-list-tile-action>
+              <v-icon>location_on</v-icon>
+            </v-list-tile-action>
+            <v-list-tile-content>
+              <v-list-tile-title>
+                <span v-if="viewUser.last_ip == null">
+                  Unknown
+                </span>
+                <span v-else>
+                  {{viewUser.last_ip}}
+                </span>
+              </v-list-tile-title>
+              <v-list-tile-sub-title>Last ip</v-list-tile-sub-title>
             </v-list-tile-content>
           </v-list-tile>
 
@@ -146,7 +169,14 @@
             </v-list-tile-action>
 
             <v-list-tile-content>
-              <v-list-tile-title>{{viewUser.last_login_at}}</v-list-tile-title>
+              <v-list-tile-title>
+                <span v-if="viewUser.last_login_at == null">
+                  Never logged
+                </span>
+                <span v-else>
+                  {{viewUser.last_login_at}}
+                </span>
+              </v-list-tile-title>
               <v-list-tile-sub-title>Last login at</v-list-tile-sub-title>
             </v-list-tile-content>
           </v-list-tile>
@@ -207,7 +237,7 @@ export default {
     viewItem(item) {
       this.$apitator.query(this, {
         body: {
-          query: `query($id: String!){getOneUser(id: $id){id,last_username,last_email,last_avatar,last_user_agent,is_admin,created_at,last_login_at}}`,
+          query: `query($id: String!){getOneUser(id: $id){id,last_username,last_email,last_avatar,last_ip,last_user_agent,is_admin,created_at,last_login_at}}`,
           variables: {
             id: item.id
           }
