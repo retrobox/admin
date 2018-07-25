@@ -15,7 +15,11 @@
         <span v-bind:class="{'font-weight-bold': props.item.is_admin}">{{ props.item.title }}</span>
       </td>
       <td>
-        <flag :iso="props.item.locale | flag" /></td>
+        <flag :iso="props.item.locale | flag" />
+      </td>
+      <td>
+        {{ props.item.items_count }}
+      </td>
       <td class="justify-end align-center layout px-2">
           <v-btn
           icon
@@ -153,8 +157,14 @@ export default {
         {
           text: 'Locale',
           align: 'left',
-          sortable: false,
+          sortable: true,
           value: 'locale'
+        },
+        {
+          text: 'Items',
+          align: 'left',
+          sortable: true,
+          value: 'items_count'
         },
         {
           text: 'Actions',
@@ -174,7 +184,7 @@ export default {
     fetchData: function() {
       this.$apitator.query(this, {
         body: {
-          query: `query{getManyShopCategories{id,locale,created_at,updated_at,title,is_customizable}}`
+          query: `query{getManyShopCategories{id,locale,items_count,created_at,updated_at,title,is_customizable}}`
         }
       }).then((response) => {
         this.categories = response.data.data.getManyShopCategories

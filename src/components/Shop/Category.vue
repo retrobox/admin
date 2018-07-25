@@ -66,7 +66,9 @@
       </v-card-actions>
     </v-card>
   </div>
-  <v-layout align-center justify-end row fill-height>
+  <v-layout align-center justify-space-between row fill-height>
+    <span class="ml-3">{{category.items_count}} items</span>
+    <div>
     <v-tooltip top>
       <v-btn icon @click="$router.push({name: 'ShopItemCreate', params: {id: category.id}})" slot="activator">
         <v-icon>add</v-icon>
@@ -76,6 +78,7 @@
     <v-btn icon @click="fetchData()">
       <v-icon>refresh</v-icon>
     </v-btn>
+  </div>
   </v-layout>
 
   <v-data-table :headers="headers" :items="category.items" hide-actions class="elevation-1">
@@ -301,7 +304,7 @@ export default {
     fetchData: function() {
       this.$apitator.query(this, {
         body: {
-          query: `query($id: String!){getOneShopCategory(id: $id){id,locale,created_at,updated_at,title,is_customizable,items{title, price, version, id}}}`,
+          query: `query($id: String!){getOneShopCategory(id: $id){id,locale,created_at,updated_at,items_count,title,is_customizable,items{title, price, version, id}}}`,
           variables: {
             id: this.$route.params.id
           }
