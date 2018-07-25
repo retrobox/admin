@@ -88,8 +88,12 @@
             @blur="$v.image.$touch()"
           ></v-text-field>
 
-          <v-layout class="my-4" justify-center align-center fill-height v-if="!$v.image.$invalid">
-            <img :src="image" />
+          <v-layout class="my-4" row wrap justify-center align-center fill-height v-if="!$v.image.$invalid">
+            <v-flex xs8 md6>
+              <v-card>
+                <v-card-media :src="image" height="200px"></v-card-media>
+              </v-card>
+            </v-flex>
           </v-layout>
 
           <!-- add many images -->
