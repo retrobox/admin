@@ -4,5 +4,6 @@ const prodEnv = require('./prod.env')
 
 module.exports = merge(prodEnv, {
   NODE_ENV: '"development"',
-  API_ENDPOINT: '"http://localhost:8000"'
+  API_ENDPOINT: '"http://localhost:8000"',
+  COOKIE_DOMAIN: '"localhost"'
 })

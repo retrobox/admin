@@ -91,7 +91,7 @@
         },
         methods: {
             logout: function () {
-                this.$cookie.delete('user_token')
+                this.$cookie.delete('user_token', {domain: process.env.COOKIE_DOMAIN})
                 this.$router.push({'name': 'LogoutSuccessful'})
             }
         }
