@@ -87,7 +87,7 @@
         {{props.item.title}}
       </td>
       <td>
-        {{props.item.version}}
+        {{props.item.identifier}}
       </td>
       <td>
         {{props.item.price}}
@@ -277,10 +277,10 @@ export default {
           value: 'title'
         },
         {
-          text: 'Version',
+          text: 'Identifier',
           align: 'left',
           sortable: false,
-          value: 'version'
+          value: 'identifier'
         },
         {
           text: 'Price',
@@ -304,7 +304,7 @@ export default {
     fetchData: function() {
       this.$apitator.query(this, {
         body: {
-          query: `query($id: String!){getOneShopCategory(id: $id){id,locale,created_at,updated_at,items_count,title,is_customizable,items{title, price, version, id}}}`,
+          query: `query($id: String!){getOneShopCategory(id: $id){id,locale,created_at,updated_at,items_count,title,is_customizable,items{title, price, version, identifier, id}}}`,
           variables: {
             id: this.$route.params.id
           }

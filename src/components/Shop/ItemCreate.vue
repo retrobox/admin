@@ -13,11 +13,19 @@
             @blur="$v.name.$touch()"
           ></v-text-field>
           <v-text-field
+            v-model="identifier"
+            :error-messages="identifierErrors"
+            :counter="40"
+            label="Identifier"
+            required
+            @input="$v.identifier.$touch()"
+            @blur="$v.identifier.$touch()"
+          ></v-text-field>
+          <v-text-field
             v-model="version"
             :error-messages="versionErrors"
             :counter="30"
             label="Version"
-            required
             @input="$v.version.$touch()"
             @blur="$v.version.$touch()"
           ></v-text-field>
@@ -148,7 +156,8 @@
           show_version: { required },
           description_short: { required, maxLength: maxLength(40)},
           description_long: { required },
-          version: { required, maxLength: maxLength(30) },
+          version: { maxLength: maxLength(30) },
+          identifier: { required, maxLength: maxLength(40) },
           weight: { required, minValue: minValue(1), decimal },
           price: { required, minValue: minValue(1), decimal },
           image: { required, url },
@@ -158,6 +167,7 @@
             return {
               name: '',
               show_version: false,
+              identifier: '',
               description_short: '',
               description_long: '',
               version: '',
@@ -183,7 +193,13 @@
             const errors = []
             if (!this.$v.version.$dirty) return errors
             !this.$v.version.maxLength && errors.push('Version must be at most 30 characters long')
-            !this.$v.version.required && errors.push('Version is required.')
+            return errors
+          },
+          identifierErrors () {
+            const errors = []
+            if (!this.$v.identifier.$dirty) return errors
+            !this.$v.identifier.maxLength && errors.push('Identifier must be at most 40 characters long')
+            !this.$v.identifier.required && errors.push('Identifier is required.')
             return errors
           },
           weightErrors () {
@@ -245,6 +261,7 @@
                             description_long: this.description_long,
                             price: this.price,
                             weight: this.weight,
+                            identifier: this.identifier,
                             image: this.image,
                             version: this.version,
                             show_version: this.show_version,

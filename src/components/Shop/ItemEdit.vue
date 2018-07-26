@@ -22,9 +22,17 @@
             :error-messages="versionErrors"
             :counter="30"
             label="Version"
-            required
             @input="$v.version.$touch()"
             @blur="$v.version.$touch()"
+          ></v-text-field>
+          <v-text-field
+            v-model="identifier"
+            :error-messages="identifierErrors"
+            :counter="40"
+            label="Identifier"
+            required
+            @input="$v.identifier.$touch()"
+            @blur="$v.identifier.$touch()"
           ></v-text-field>
           <v-text-field
             v-model="description_short"
@@ -151,9 +159,10 @@
         validations: {
           name: { required, maxLength: maxLength(40) },
           show_version: { required },
+          identifier: { required, maxLength: maxLength(40) },
           description_short: { required, maxLength: maxLength(40)},
           description_long: { required },
-          version: { required, maxLength: maxLength(30) },
+          version: { maxLength: maxLength(30) },
           weight: { required, minValue: minValue(1), decimal },
           price: { required, minValue: minValue(1), decimal },
           image: { required, url },
@@ -162,6 +171,7 @@
         data() {
             return {
               name: '',
+              identifier: '',
               show_version: false,
               description_short: '',
               description_long: '',
@@ -189,7 +199,12 @@
             const errors = []
             if (!this.$v.version.$dirty) return errors
             !this.$v.version.maxLength && errors.push('Version must be at most 30 characters long')
-            !this.$v.version.required && errors.push('Version is required.')
+            return errors
+          },
+          identifierErrors () {
+            const errors = []
+            if (!this.$v.identifier.$dirty) return errors
+            !this.$v.identifier.maxLength && errors.push('Identifier must be at most 40 characters long')
             return errors
           },
           weightErrors () {
@@ -249,6 +264,7 @@
                       weight,
                       image,
                       version,
+                      identifier,
                       show_version,
                       images{id, url, is_main},
                       category{id, title, is_customizable}
@@ -267,6 +283,7 @@
                 this.weight = item.weight
                 this.image = item.image
                 this.version = item.version
+                this.identifier = item.identifier
                 this.show_version = item.show_version
                 this.category = item.category
                 this.galery_images = item.images.map((item) => {
@@ -293,6 +310,7 @@
                             weight: this.weight,
                             image: this.image,
                             version: this.version,
+                            identifier: this.identifier,
                             show_version: this.show_version,
                             category_id: this.category.id,
                             images: this.galery_images.map((item) => {

@@ -30,9 +30,21 @@
           <v-list-tile-action />
           <v-list-tile-content>
             <v-list-tile-title>
-              {{item.version}}
+              <span v-if="item.version == null || item.version == ''">Unknown</span>
+              <span v-else>{{item.version}}</span>
             </v-list-tile-title>
             <v-list-tile-sub-title>Version</v-list-tile-sub-title>
+          </v-list-tile-content>
+        </v-list-tile>
+
+        <v-list-tile @click="">
+          <v-list-tile-action />
+          <v-list-tile-content>
+            <v-list-tile-title>
+              <span v-if="item.identifier == null || item.identifier == ''">Unknown</span>
+              <span v-else>{{item.identifier}}</span>
+            </v-list-tile-title>
+            <v-list-tile-sub-title>Identifier</v-list-tile-sub-title>
           </v-list-tile-content>
         </v-list-tile>
 
@@ -172,9 +184,6 @@
           <v-card-actions>
             <v-spacer></v-spacer>
 
-            <v-btn icon @click="deleteImageDialog=true; toDeleteImage=image">
-              <v-icon>delete</v-icon>
-            </v-btn>
             <v-btn icon target="_blank" :href="image.url">
               <v-icon>open_in_new</v-icon>
             </v-btn>
@@ -192,18 +201,6 @@
       <v-card-actions>
         <v-btn color="primary" flat @click.stop="deleteItemDialog=false">Close</v-btn>
         <v-btn color="red" flat @click.stop="deleteItem()">Delete</v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
-
-  <v-dialog v-model="deleteImageDialog" max-width="500px">
-    <v-card>
-      <v-card-title>
-        Really want to delete this image ?
-      </v-card-title>
-      <v-card-actions>
-        <v-btn color="primary" flat @click.stop="deleteImageDialog=false">Close</v-btn>
-        <v-btn color="red" flat @click.stop="deleteImage()">Delete</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -241,6 +238,7 @@ export default {
               slug,
               price,
               weight,
+              identifier,
               image,
               version,
               show_version,
