@@ -220,8 +220,13 @@ export default {
         }
       }).then((response) => {
         this.categories = response.data.data.getManyShopCategories
+
         this.categories = this.categories.map((item, index) => {
-          if (item.order === null) {
+          if (
+            this.categories.filter((item) => {
+              return item.order == 0
+            }).length > 1
+          ) {
             item.order = index
           }
           return item
