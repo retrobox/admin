@@ -1,9 +1,6 @@
 <template>
 <div class="categories">
   <v-layout align-center justify-end row fill-height>
-    <v-btn icon @click="$router.push({name: 'ShopCategoriesOrder'})">
-      <v-icon>import_export</v-icon>
-    </v-btn>
     <v-btn icon @click="$router.push({name: 'ShopCategoryCreate'})">
       <v-icon>add</v-icon>
     </v-btn>
@@ -21,9 +18,31 @@
         <flag :iso="props.item.locale | flag" />
       </td>
       <td>
-        {{ props.item.items_count }}
+        {{ props.item.order }}
       </td>
       <td class="justify-end align-center layout px-2">
+
+        <v-btn
+        icon
+        small
+        @click="down(props.item)">
+          <v-icon
+          small
+          >
+            arrow_downward
+          </v-icon>
+        </v-btn>
+
+        <v-btn
+        icon
+        small
+        @click="up(props.item)">
+          <v-icon
+          small
+          >
+            arrow_upward
+          </v-icon>
+        </v-btn>
           <v-btn
           icon
           small
@@ -67,6 +86,16 @@
         </td>
     </template>
   </v-data-table>
+
+  <v-layout align-center justify-end row fill-height class="mt-2">
+    <v-btn @click="$router.push({name: 'ShopCategories'})" ripple>
+      Cancel
+    </v-btn>
+    <v-btn @click="submit()" ripple color="primary">
+      Submit
+    </v-btn>
+  </v-layout>
+
   <v-dialog v-model="viewDialog" max-width="500px">
     <v-card>
       <v-card-text>
@@ -160,14 +189,14 @@ export default {
         {
           text: 'Locale',
           align: 'left',
-          sortable: true,
+          sortable: false,
           value: 'locale'
         },
         {
-          text: 'Items',
+          text: 'Order',
           align: 'left',
           sortable: true,
-          value: 'items_count'
+          value: 'order'
         },
         {
           text: 'Actions',
@@ -187,11 +216,21 @@ export default {
     fetchData: function() {
       this.$apitator.query(this, {
         body: {
-          query: `query{getManyShopCategories{id,locale,items_count,created_at,updated_at,title,is_customizable}}`
+          query: `query{getManyShopCategories(orderBy: "order", orderDir: "asc"){id,locale,order,items_count,created_at,updated_at,title,is_customizable}}`
         }
       }).then((response) => {
         this.categories = response.data.data.getManyShopCategories
+        this.categories = this.categories.map((item, index) => {
+          console.log(item.order);
+          console.log(item.locale);
+          if (item.order === null) {
+            item.order = index
+          }
+          return item
+        })
       })
+      //reset Order
+
     },
     viewItem(item) {
       this.$apitator.query(this, {
@@ -222,10 +261,54 @@ export default {
         })
         this.fetchData()
       })
+    },
+    up(item) {
+      var index = this.categories.indexOf(item)
+      if (item.order > 0) {
+        var toReplace = this.categories.indexOf(this.categories.filter((_item) => {
+          return _item.order == item.order - 1
+        })[0])
+        var order = this.categories[toReplace].order
+        this.categories[toReplace].order = item.order
+        item.order = order
+      }
+    },
+    down(item) {
+      var index = this.categories.indexOf(item)
+      if (item.order < this.categories.length - 1) {
+        var toReplace = this.categories.indexOf(this.categories.filter((_item) => {
+          return _item.order == item.order + 1
+        })[0])
+        var order = this.categories[toReplace].order
+        this.categories[toReplace].order = item.order
+        item.order = order
+      }
+    },
+    submit(item) {
+      this.$apitator.query(this, {
+          body: {
+            query:`mutation($categories: [ShopCategoryUpdateOrderInput]!){updateShopCategoriesOrder(categories: $categories)}`,
+            variables: {
+              categories: this.categories.map((item) => {
+                return {
+                  id: item.id,
+                  order: item.order
+                }
+              })
+            }
+          }
+      }).then((response) => {
+        this.$store.commit('ADD_ALERT', {
+          color: 'success',
+          text: 'Updated the order!'
+        })
+        this.categories = []
+        this.fetchData()
+      })
     }
   },
   created() {
-    this.$store.commit('SET_TITLE', 'Shop Categories')
+    this.$store.commit('SET_TITLE', 'Order shop categories')
     this.$store.commit('SET_LAYOUT', 'dashboard')
   }
 }

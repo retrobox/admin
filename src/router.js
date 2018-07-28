@@ -13,6 +13,7 @@ import ShopItem from '@/components/Shop/Item'
 import ShopItemCreate from '@/components/Shop/ItemCreate.vue'
 import ShopItemEdit from '@/components/Shop/ItemEdit.vue'
 import ShopCategories from '@/components/Shop/Categories'
+import ShopCategoriesOrder from '@/components/Shop/CategoriesOrder'
 import ShopCategory from '@/components/Shop/Category'
 import ShopCategoryEdit from '@/components/Shop/CategoryEdit.vue'
 import ShopCategoryCreate from '@/components/Shop/CategoryCreate.vue'
@@ -98,6 +99,11 @@ export default new Router({
       path: '/shop/categories',
       name: 'ShopCategories',
       component: ShopCategories
+    },
+    {
+      path: '/shop/categories/order',
+      name: 'ShopCategoriesOrder',
+      component: ShopCategoriesOrder
     },
     {
       path: '/shop/category/create',
