@@ -221,16 +221,12 @@ export default {
       }).then((response) => {
         this.categories = response.data.data.getManyShopCategories
         this.categories = this.categories.map((item, index) => {
-          console.log(item.order);
-          console.log(item.locale);
           if (item.order === null) {
             item.order = index
           }
           return item
         })
       })
-      //reset Order
-
     },
     viewItem(item) {
       this.$apitator.query(this, {
