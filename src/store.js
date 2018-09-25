@@ -42,6 +42,11 @@ export const store = new Vuex.Store({
                 indexRoute: { name: "ShopCategories" }
             },
             {
+                title: "Order",
+                icon: "receipt",
+                indexRoute: { name: "ShopOrders" }
+            },
+            {
                 title: "Games",
                 icon: "videogame_asset",
                 indexRoute: { name: "Games" }

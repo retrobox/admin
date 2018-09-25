@@ -17,6 +17,7 @@ import ShopCategoriesOrder from '@/components/Shop/CategoriesOrder'
 import ShopCategory from '@/components/Shop/Category'
 import ShopCategoryEdit from '@/components/Shop/CategoryEdit.vue'
 import ShopCategoryCreate from '@/components/Shop/CategoryCreate.vue'
+import ShopOrders from '@/components/Shop/Orders.vue'
 
 //Games
 import Games from '@/components/Games/Games.vue'
@@ -28,97 +29,102 @@ import Test from '@/components/Test'
 Vue.use(Router)
 
 export default new Router({
-  mode: "history",
-  routes: [{
-      path: '/',
-      name: 'Index',
-      component: Index
+    mode: "history",
+    routes: [{
+        path: '/',
+        name: 'Index',
+        component: Index
     },
-    {
-      path: '/test',
-      name: 'Test',
-      component: Test
-    },
-    {
-      path: '/logout/success',
-      name: 'LogoutSuccessful',
-      component: LogoutSuccessful
-    },
-    {
-      path: '*',
-      name: 'NotFound',
-      component: NotFound
-    },
-    {
-      path: '/dashboard',
-      name: 'Dashboard',
-      component: Dashboard
-    },
+        {
+            path: '/test',
+            name: 'Test',
+            component: Test
+        },
+        {
+            path: '/logout/success',
+            name: 'LogoutSuccessful',
+            component: LogoutSuccessful
+        },
+        {
+            path: '*',
+            name: 'NotFound',
+            component: NotFound
+        },
+        {
+            path: '/dashboard',
+            name: 'Dashboard',
+            component: Dashboard
+        },
 
-    //users
-    {
-      path: '/users',
-      name: 'Users',
-      component: Users
-    },
-    {
-      path: '/user/:id',
-      name: 'User',
-      component: User
-    },
+        //users
+        {
+            path: '/users',
+            name: 'Users',
+            component: Users
+        },
+        {
+            path: '/user/:id',
+            name: 'User',
+            component: User
+        },
 
-    //games
-    {
-      path: '/games/games',
-      name: 'Games',
-      component: Games
-    },
+        //games
+        {
+            path: '/games/games',
+            name: 'Games',
+            component: Games
+        },
 
-    //shop
-    {
-      path: '/shop/items',
-      name: 'ShopItems',
-      component: ShopItems
-    },
-    {
-      path: '/shop/category/:id/create',
-      name: 'ShopItemCreate',
-      component: ShopItemCreate
-    },
-    {
-      path: '/shop/item/:id',
-      name: 'ShopItem',
-      component: ShopItem
-    },
-    {
-      path: '/shop/item/:id/edit',
-      name: 'ShopItemEdit',
-      component: ShopItemEdit
-    },
-    {
-      path: '/shop/categories',
-      name: 'ShopCategories',
-      component: ShopCategories
-    },
-    {
-      path: '/shop/categories/order',
-      name: 'ShopCategoriesOrder',
-      component: ShopCategoriesOrder
-    },
-    {
-      path: '/shop/category/create',
-      name: 'ShopCategoryCreate',
-      component: ShopCategoryCreate
-    },
-    {
-      path: '/shop/category/:id/edit',
-      name: 'ShopCategoryEdit',
-      component: ShopCategoryEdit
-    },
-    {
-      path: '/shop/category/:id',
-      name: 'ShopCategory',
-      component: ShopCategory
-    }
-  ]
+        //shop
+        {
+            path: '/shop/items',
+            name: 'ShopItems',
+            component: ShopItems
+        },
+        {
+            path: '/shop/category/:id/create',
+            name: 'ShopItemCreate',
+            component: ShopItemCreate
+        },
+        {
+            path: '/shop/item/:id',
+            name: 'ShopItem',
+            component: ShopItem
+        },
+        {
+            path: '/shop/item/:id/edit',
+            name: 'ShopItemEdit',
+            component: ShopItemEdit
+        },
+        {
+            path: '/shop/categories',
+            name: 'ShopCategories',
+            component: ShopCategories
+        },
+        {
+            path: '/shop/categories/order',
+            name: 'ShopCategoriesOrder',
+            component: ShopCategoriesOrder
+        },
+        {
+            path: '/shop/category/create',
+            name: 'ShopCategoryCreate',
+            component: ShopCategoryCreate
+        },
+        {
+            path: '/shop/category/:id/edit',
+            name: 'ShopCategoryEdit',
+            component: ShopCategoryEdit
+        },
+        {
+            path: '/shop/category/:id',
+            name: 'ShopCategory',
+            component: ShopCategory
+        },
+        {
+            path: '/shop/orders',
+            name: 'ShopOrders',
+            component: ShopOrders
+        }
+    ]
 })
