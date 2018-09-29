@@ -173,6 +173,72 @@
 
                         <v-divider inset></v-divider>
 
+                        <v-list-tile>
+                            <v-list-tile-action>
+                                <v-icon>account_circle</v-icon>
+                            </v-list-tile-action>
+                            <v-list-tile-content>
+                                <v-list-tile-title>
+                                    Customer name
+                                </v-list-tile-title>
+                                <v-list-tile-sub-title>
+                                    {{viewOrder.user.first_name}} {{viewOrder.user.last_name}}
+                                </v-list-tile-sub-title>
+                            </v-list-tile-content>
+                        </v-list-tile>
+
+                        <v-list-tile>
+                            <v-list-tile-action>
+                                <v-icon>location_on</v-icon>
+                            </v-list-tile-action>
+                            <v-list-tile-content>
+                                <v-list-tile-title>
+                                    First Address line
+                                </v-list-tile-title>
+                                <v-list-tile-sub-title>
+                                    {{viewOrder.user.address_first_line}}
+                                </v-list-tile-sub-title>
+                            </v-list-tile-content>
+                        </v-list-tile>
+
+                        <v-list-tile v-if="viewOrder.user.address_second_line !== undefined && viewOrder.user.address_second_line !== null && viewOrder.user.address_second_line !== ''">
+                            <v-list-tile-action />
+                            <v-list-tile-content>
+                                <v-list-tile-title>
+                                    Second Address line
+                                </v-list-tile-title>
+                                <v-list-tile-sub-title>
+                                    {{viewOrder.user.address_second_line}}
+                                </v-list-tile-sub-title>
+                            </v-list-tile-content>
+                        </v-list-tile>
+
+                        <v-list-tile>
+                            <v-list-tile-action />
+                            <v-list-tile-content>
+                                <v-list-tile-title>
+                                    City
+                                </v-list-tile-title>
+                                <v-list-tile-sub-title>
+                                    {{viewOrder.user.address_postal_code}} {{viewOrder.user.address_city}}
+                                </v-list-tile-sub-title>
+                            </v-list-tile-content>
+                        </v-list-tile>
+
+                        <v-list-tile v-if="viewOrder.user.address_country !== undefined && viewOrder.user.address_country !== null && viewOrder.user.address_country !== ''">
+                            <v-list-tile-action />
+                            <v-list-tile-content>
+                                <v-list-tile-title>
+                                    Country
+                                </v-list-tile-title>
+                                <v-list-tile-sub-title>
+                                    {{viewOrder.user.address_country}}
+                                </v-list-tile-sub-title>
+                            </v-list-tile-content>
+                        </v-list-tile>
+
+                        <v-divider inset></v-divider>
+
                         <create-update :item="viewOrder"/>
                     </v-list>
                 </v-card-text>
@@ -189,7 +255,9 @@
         data() {
             return {
                 viewDialog: false,
-                viewOrder: {},
+                viewOrder: {
+                    user: {}
+                },
                 editDialog: false,
                 editOrder: {},
                 to_edit_shipped: false,
@@ -300,6 +368,19 @@
                                     updated_at
                                     on_way_id
                                     status
+                                    user {
+                                        first_name
+                                        last_name
+                                        last_username
+                                        last_avatar
+                                        last_locale
+                                        last_email
+                                        address_first_line
+                                        address_second_line
+                                        address_postal_code
+                                        address_city
+                                        address_country
+                                    }
                                     items {
                                         id,
                                         title,
