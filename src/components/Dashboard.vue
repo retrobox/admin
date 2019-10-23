@@ -24,7 +24,7 @@
             }
         },
         created() {
-            this.icons = require('./../assets/icons.json');
+            //this.icons = require('./../assets/icons.json');
             this.$store.commit('SET_TITLE', 'Dashboard')
             this.$store.commit('SET_LAYOUT', 'dashboard')
         }
