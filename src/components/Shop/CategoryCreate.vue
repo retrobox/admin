@@ -32,7 +32,7 @@
         </form>
       </v-card-text>
       <v-card-actions>
-          <v-btn @click="submit" color="primary">submit</v-btn>
+          <v-btn @click="submit" color="primary" flat>submit</v-btn>
       </v-card-actions>
     </v-card>
   </div>

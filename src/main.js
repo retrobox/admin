@@ -13,14 +13,15 @@ import Vuelidate from 'vuelidate'
 import mavonEditor from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
 import VueClipboard from 'vue-clipboard2'
-var VueCookie = require('vue-cookie');
+import Moment from 'moment'
+let VueCookie = require('vue-cookie');
 
-Vue.use(VueClipboard)
-Vue.use(Vuelidate)
+Vue.use(VueClipboard);
+Vue.use(Vuelidate);
 Vue.use(FlagIcon);
 Vue.use(VueCookie);
-Vue.use(Vuetify)
-Vue.use(mavonEditor)
+Vue.use(Vuetify);
+Vue.use(mavonEditor);
 Vue.use(VueApitator, {
     rootUrl: process.env.API_ENDPOINT,
     graphQLUrl: process.env.API_ENDPOINT + "/graphql",
@@ -29,21 +30,25 @@ Vue.use(VueApitator, {
     }
 });
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
 
 Vue.filter('flag', function (value) {
-  var flag = ""
+  let flag = "";
   switch (value) {
     case 'en':
-      flag = 'gb'
+      flag = 'gb';
       break;
 
     default:
       flag = value
   }
   return flag
-})
-Vue.component('create-update', CreateUpdate)
+});
+Vue.filter('fromNow', function (value) {
+  return Moment(value).fromNow()
+});
+
+Vue.component('create-update', CreateUpdate);
 
 /* eslint-disable no-new */
 new Vue({

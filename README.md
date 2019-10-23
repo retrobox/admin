@@ -1,7 +1,27 @@
 # Administrator's dashboard
 
-> The administrator panel to manage ressources on API
+> The administrator panel to manage resources on API
 
+## Game collection
+
+- games collection (/game)
+  - games (/games)
+    - (/add)
+    - (/edit/:id)
+    - (/:id)
+  - editor (/editors)
+    - (/add)
+    - (/edit/:id)
+    - (/:id)
+  - platform (/platforms)
+    - (/add)
+    - (/edit/:id)
+    - (/:id)
+  - tag (/tags)
+    - (/add)
+    - (/edit/:id)
+    - (/:id)
+    
 ## Docker image
 
 - expose on 80 port
