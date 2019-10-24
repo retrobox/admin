@@ -15,8 +15,10 @@
           {{props.item.items_count}}
         </td>
         <td>
-          <v-avatar size="20" class="mr-2"><img :src="props.item.user.last_avatar" alt=""></v-avatar>
-          {{props.item.user.last_username}}
+          <div v-if="props.item.user !== null">
+            <v-avatar size="20" class="mr-2"><img :src="props.item.user.last_avatar" alt=""></v-avatar>
+            {{props.item.user.last_username}}
+          </div>
         </td>
         <td>
           {{props.item.way|capitalize}}
