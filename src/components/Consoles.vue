@@ -48,16 +48,20 @@
               edit
             </v-icon>
           </v-btn>
-          <v-btn
-            icon
-            small
-            @click="$router.push({ name: 'ShopOrders', query: { id: props.item.order.id }})">
-            <v-icon
+          <v-tooltip top>
+            <v-btn
+              slot="activator"
+              icon
               small
-            >
-              receipt
-            </v-icon>
-          </v-btn>
+              @click="$router.push({ name: 'ShopOrders', query: { id: props.item.order.id }})">
+              <v-icon
+                small
+              >
+                receipt
+              </v-icon>
+            </v-btn>
+            <span>Open the order in which this console was ordered</span>
+          </v-tooltip>
         </td>
       </template>
     </v-data-table>

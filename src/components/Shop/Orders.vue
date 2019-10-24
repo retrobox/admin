@@ -48,6 +48,20 @@
               edit
             </v-icon>
           </v-btn>
+          <v-tooltip top v-if="props.item.bill_url != null">
+            <v-btn
+              slot="activator" 
+              icon
+              small
+              @click="openBill(props.item)">
+              <v-icon
+                small
+              >
+                receipt
+              </v-icon>
+            </v-btn>
+            <span>Open bill (or receipt)</span>
+          </v-tooltip>
         </td>
       </template>
     </v-data-table>
@@ -334,6 +348,7 @@
                 total_price
                 way
                 status
+                bill_url
                 created_at
                 updated_at
                 user{id, last_username, last_avatar}
@@ -441,6 +456,9 @@
             this.viewDialog = true
           })
         }
+      },
+      openBill: function (item) {
+        window.open(item.bill_url).focus()
       }
     },
     created() {
