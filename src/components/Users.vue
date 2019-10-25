@@ -318,7 +318,6 @@ export default {
       this.toDestroyUser = user
     },
     destroyUser() {
-      alert('REALLYYLLY?')
       this.$apitator.query(this, {
         body: {
           query: `mutation($id: ID!){

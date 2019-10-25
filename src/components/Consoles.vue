@@ -44,6 +44,9 @@
             </v-btn>
             <span>Open the order in which this console was ordered</span>
           </v-tooltip>
+          <v-btn icon small @click="openDestroyConsoleModal(props.item)">
+            <v-icon small color="error">delete</v-icon>
+          </v-btn>
         </td>
       </template>
     </v-data-table>
@@ -137,6 +140,15 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="destroyConsoleModal" max-width="500px">
+      <v-card>
+        <v-card-title>DO YOU REALLY REALLY WANT DESTROY THIS FUCKING CONSOLE ??</v-card-title>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn flat color="error" @click="destroyConsole()">Yes</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -196,7 +208,9 @@ export default {
         order_id: ""
       },
       editConsoleModal: false,
-      toEditConsole: {}
+      toEditConsole: {},
+      destroyConsoleModal: false,
+      toDestroyConsole: {}
     };
   },
   methods: {
@@ -328,6 +342,31 @@ export default {
           this.toEditConsole.order_id = response.data.data.getOneConsole.order.id;
         });
       this.editConsoleModal = true;
+    },
+    openDestroyConsoleModal(item) {
+      this.destroyConsoleModal = true
+      this.toDestroyConsole = item
+    },
+    destroyConsole() {
+      this.$apitator.query(this, {
+        body: {
+          query: `mutation($id: ID!){
+            destroyConsole(id: $id)
+          }`,
+          variables: {
+            id: this.toDestroyConsole.id
+          }
+        }
+      }).then((response) => {
+        this.destroyConsoleModal = false
+        this.$store.commit('ADD_ALERT', {
+          color: 'info',
+          text: "Console destroyed!"
+        })
+        this.fetchData()
+      }).catch(() => {
+        this.destroyConsoleModal = false
+      })
     }
   },
   created() {

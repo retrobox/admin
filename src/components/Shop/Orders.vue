@@ -64,6 +64,17 @@
             </v-btn>
             <span>Open bill (or receipt)</span>
           </v-tooltip>
+          <v-btn
+            icon
+            small
+            @click="openDestroyOrderModal(props.item)">
+            <v-icon
+              color="error"
+              small
+            >
+              delete
+            </v-icon>
+          </v-btn>
         </td>
       </template>
     </v-data-table>
@@ -267,6 +278,19 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="destroyOrderModal" max-width="500px">
+      <v-card>
+        <v-card-title>
+          Do you REALLY REALLY WANT TO DESTROY THIS ORDER ???
+        </v-card-title>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn flat color="error" @click="destroyOrder()">
+            Destroy
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -325,7 +349,9 @@
             value: 'id',
             sortable: false
           }
-        ]
+        ],
+        destroyOrderModal: false,
+        toDestroyOrder: {}
       }
     },
     filters: {
@@ -461,6 +487,31 @@
       },
       openBill: function (item) {
         window.open(item.bill_url).focus()
+      },
+      openDestroyOrderModal: function (item) {
+        this.destroyOrderModal = true
+        this.toDestroyOrder = item
+      },
+      destroyOrder: function () {
+        this.$apitator.query(this, {
+          body: {
+            query: `mutation($id: ID!){
+              destroyShopOrder(id: $id)
+            }`,
+            variables: {
+              id: this.toDestroyOrder.id
+            }
+          }
+        }).then((response) => {
+          this.destroyOrderModal = false
+          this.$store.commit('ADD_ALERT', {
+            color: 'info',
+            text: "Order destroyed!"
+          })
+          this.fetchData()
+        }).catch(() => {
+          this.destroyOrderModal = false
+        })
       }
     },
     created() {
