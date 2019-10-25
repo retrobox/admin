@@ -329,6 +329,7 @@ export default {
           }
         }
       }).then((response) => {
+        this.destroyUserModal = false
         this.$store.commit('ADD_ALERT', {
           color: 'info',
           text: "User Destroyed!"
