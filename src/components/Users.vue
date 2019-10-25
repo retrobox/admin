@@ -40,6 +40,16 @@
               edit
             </v-icon>
           </v-btn>
+          <v-btn
+          icon
+          small
+          @click="openDestroyUser(props.item)">
+            <v-icon
+            small
+            >
+              delete
+            </v-icon>
+          </v-btn>
         </td>
     </template>
   </v-data-table>
@@ -188,6 +198,19 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
+  <v-dialog v-model="destroyUserModal" max-width="500px">
+    <v-card>
+      <v-card-title>
+        Do you REALLY REALLY WANT TO DESTROY THIS USER ACCOUNT ???
+      </v-card-title>
+      <v-card-actions>
+        <v-spacer />
+        <v-btn flat color="error" @click="destroyUser()">
+          Destroy
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </div>
 </template>
 
@@ -226,6 +249,7 @@ export default {
         },
         { text: 'Actions', value: 'id', sortable: false, align: 'right' }
       ],
+      destroyUserModal: false
     }
   },
   methods: {
@@ -287,6 +311,31 @@ export default {
         this.fetchData()
       }).catch(() => {
         this.editDialog = true
+      })
+    },
+    openDestroyUser(user) {
+      this.destroyUserModal = true
+      this.toDestroyUser = user
+    },
+    destroyUser() {
+      alert('REALLYYLLY?')
+      this.$apitator.query(this, {
+        body: {
+          query: `mutation($id: ID!){
+            destroyUser(id: $id)
+          }`,
+          variables: {
+            id: this.toDestroyUser.id
+          }
+        }
+      }).then((response) => {
+        this.$store.commit('ADD_ALERT', {
+          color: 'info',
+          text: "User Destroyed!"
+        })
+        this.fetchData()
+      }).catch(() => {
+        this.destroyUserModal = false
       })
     }
   },
