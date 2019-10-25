@@ -493,27 +493,25 @@
         this.toDestroyOrder = item
       },
       destroyOrder: function () {
-        if (alert('DO YOU REALLY REALLY WANT TO DO THAT ???')) {  
-          this.$apitator.query(this, {
-            body: {
-              query: `mutation($id: ID!){
-                destroyShopOrder(id: $id)
-              }`,
-              variables: {
-                id: this.toDestroyOrder.id
-              }
+        this.$apitator.query(this, {
+          body: {
+            query: `mutation($id: ID!){
+              destroyShopOrder(id: $id)
+            }`,
+            variables: {
+              id: this.toDestroyOrder.id
             }
-          }).then((response) => {
-            this.destroyOrderModal = false
-            this.$store.commit('ADD_ALERT', {
-              color: 'info',
-              text: "Order destroyed!"
-            })
-            this.fetchData()
-          }).catch(() => {
-            this.destroyOrderModal = false
+          }
+        }).then((response) => {
+          this.destroyOrderModal = false
+          this.$store.commit('ADD_ALERT', {
+            color: 'info',
+            text: "Order destroyed!"
           })
-        }
+          this.fetchData()
+        }).catch(() => {
+          this.destroyOrderModal = false
+        })
       }
     },
     created() {
