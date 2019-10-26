@@ -84,7 +84,7 @@
           Edit order #"{{editOrder.id}}"
         </v-card-title>
         <v-card-text>
-          <form v-if="editOrder.status === 'payed'">
+          <!-- <form v-if="editOrder.status === 'payed' || editOrder.status === 'shipped'">
             <v-switch
               label="Is shipped ?"
               v-model="to_edit_shipped">
@@ -94,6 +94,22 @@
           <div v-if="editOrder.status !== 'payed'">
             No actions available
           </div>
+           -->
+           <b>
+             ⚠️ PLEASE BE CAREFUL, BY CHANGING THE STATUS TO SHIPPED YOU WILL SEND AN EMAIL TO CUSTOMER ⚠️
+           </b>
+           <br>
+           <br>
+          <v-select
+            :items="selectStatus"
+            v-model="editOrder.status"
+            label="Status"
+          ></v-select>
+          <v-text-field
+            label="Shipping id (or shipping tracking link)"
+            v-model="editOrder.shipping_id"
+            :disabled="editOrder.status === 'payed'"
+          />
         </v-card-text>
         <v-card-actions>
           <v-btn color="red" flat @click.stop="editDialog=false">Close</v-btn>
@@ -134,6 +150,16 @@
               <v-list-tile-content>
                 <v-list-tile-title>Shipping price</v-list-tile-title>
                 <v-list-tile-sub-title>€ {{viewOrder.total_shipping_price}}</v-list-tile-sub-title>
+              </v-list-tile-content>
+            </v-list-tile>
+            <v-list-tile>
+              <v-list-tile-action>
+              </v-list-tile-action>
+              <v-list-tile-content>
+                <v-list-tile-title>Shipping method</v-list-tile-title>
+                <v-list-tile-sub-title>
+                  {{ viewOrder.shipping_method|capitalize }}
+                </v-list-tile-sub-title>
               </v-list-tile-content>
             </v-list-tile>
 
@@ -300,11 +326,11 @@
       return {
         viewDialog: false,
         viewOrder: {
-          user: {}
+          user: {},
+          shipping_method: ''
         },
         editDialog: false,
         editOrder: {},
-        to_edit_shipped: false,
         orders: [],
         headers: [
           {
@@ -314,7 +340,7 @@
             value: 'id'
           },
           {
-            text: 'Items count',
+            text: 'Items',
             align: 'left',
             sortable: true,
             value: 'items_count'
@@ -351,7 +377,12 @@
           }
         ],
         destroyOrderModal: false,
-        toDestroyOrder: {}
+        toDestroyOrder: {},
+        selectStatus: [
+          { text: "Payed", value: "payed" },
+          { text: "Shipped", value: "shipped" }
+          //,{ text: "Being prepared", value: "prepared" }
+        ]
       }
     },
     filters: {
@@ -412,6 +443,8 @@
                       total_shipping_price
                       total_price
                       sub_total_price
+                      shipping_id
+                      shipping_method
                       created_at
                       updated_at
                       on_way_id
@@ -452,10 +485,6 @@
       },
       saveEditOrder: function () {
         this.editDialog = false;
-        if (this.to_edit_shipped) {
-          this.editOrder.status = 'shipped';
-          this.to_edit_shipped = false
-        }
         this.$apitator.query(this, {
           body: {
             query: `mutation ($order: ShopOrderUpdateInput) {
@@ -464,7 +493,8 @@
             variables: {
               order: {
                 id: this.editOrder.id,
-                status: this.editOrder.status
+                status: this.editOrder.status,
+                shipping_id: this.editOrder.shipping_id
               }
             }
           }
