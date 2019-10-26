@@ -223,7 +223,7 @@ export default {
         .query(this, {
           body: {
             query: `query {
-              getManyConsoles (all: true) {
+              getManyConsoles (all: true, orderBy: "created_at", orderDir: "desc") {
                 id
                 color
                 storage
@@ -283,8 +283,8 @@ export default {
         .query(this, {
           body: {
             query: `mutation ($console: ConsoleUpdateInput!) {
-            updateConsole(console: $console)
-          }`,
+              updateConsole(console: $console)
+            }`,
             variables: {
               console: {
                 id: this.toEditConsole.id,
@@ -311,25 +311,25 @@ export default {
         .query(this, {
           body: {
             query: `query($id: String!){
-            getOneConsole (id: $id) {
-              id
-              color
-              storage
-              user {
+              getOneConsole (id: $id) {
                 id
-                last_username
-                last_email
-                last_avatar
-              }
-              order {
-                id
+                color
+                storage
+                user {
+                  id
+                  last_username
+                  last_email
+                  last_avatar
+                }
+                order {
+                  id
+                  created_at
+                }
+                first_boot_at
                 created_at
+                updated_at
               }
-              first_boot_at
-              created_at
-              updated_at
-            }
-          }`,
+            }`,
             variables: {
               id: console.id
             }
