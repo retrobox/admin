@@ -27,6 +27,9 @@
           {{props.item.status|capitalize}}
         </td>
         <td>
+          {{props.item.created_at|subDate}}
+        </td>
+        <td>
           € {{props.item.total_price}}
         </td>
         <td class="justify-end align-center layout px-2">
@@ -364,6 +367,12 @@
             value: 'status'
           },
           {
+            text: 'Created at',
+            align: 'left',
+            sortable: true,
+            value: 'created_at'
+          },
+          {
             text: 'Total',
             align: 'left',
             sortable: false,
@@ -390,6 +399,9 @@
         if (!value) return '';
         value = value.toString();
         return value.charAt(0).toUpperCase() + value.slice(1)
+      },
+      subDate: function (value) {
+        return value.substring(0, value.length - 3)
       }
     },
     methods: {
