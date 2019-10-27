@@ -8,7 +8,7 @@
         <v-btn icon @click="fetchData()">
           <v-icon>refresh</v-icon>
         </v-btn>
-        <v-btn icon @click="addConsoleModal = true">
+        <v-btn icon @click="openAddConsoleModal()">
           <v-icon>add</v-icon>
         </v-btn>
       </v-layout>
@@ -33,7 +33,7 @@
           <v-btn icon small @click="editConsole(props.item)">
             <v-icon small>edit</v-icon>
           </v-btn>
-          <v-tooltip top>
+          <v-tooltip top v-if="props.item.order !== null">
             <v-btn
               slot="activator"
               icon
@@ -80,6 +80,14 @@
               </v-list-tile-content>
             </v-list-tile>
 
+            <v-list-tile>
+              <v-list-tile-action />
+              <v-list-tile-content>
+                <v-list-tile-title>{{toViewConsole.version}}</v-list-tile-title>
+                <v-list-tile-sub-title>Version</v-list-tile-sub-title>
+              </v-list-tile-content>
+            </v-list-tile>
+
             <v-divider inset></v-divider>
 
             <create-update :item="toViewConsole" />
@@ -114,8 +122,9 @@
             <v-text-field label="ID" v-model="toAddConsole.id" />
             <v-select :items="colors" label="Color" v-model="toAddConsole.color"></v-select>
             <v-select :items="storage" label="Size" v-model="toAddConsole.storage"></v-select>
+            <v-select :items="consoleVersions" label="Version" v-model="toAddConsole.version"></v-select>
             <v-text-field label="User id" v-model="toAddConsole.user_id" />
-            <v-text-field label="Order id" v-model="toAddConsole.order_id" />
+            <v-text-field label="Order id (optional)" v-model="toAddConsole.order_id" />
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -131,6 +140,7 @@
             <v-text-field disabled label="ID" v-model="toEditConsole.id" />
             <v-select :items="colors" label="Color" v-model="toEditConsole.color"></v-select>
             <v-select :items="storage" label="Size" v-model="toEditConsole.storage"></v-select>
+            <v-select :items="consoleVersions" label="Version" v-model="toEditConsole.version"></v-select>
             <v-text-field label="User id" v-model="toEditConsole.user_id" />
             <v-text-field label="Order id" v-model="toEditConsole.order_id" />
           </v-form>
@@ -210,7 +220,8 @@ export default {
       editConsoleModal: false,
       toEditConsole: {},
       destroyConsoleModal: false,
-      toDestroyConsole: {}
+      toDestroyConsole: {},
+      consoleVersions: []
     };
   },
   methods: {
@@ -237,6 +248,7 @@ export default {
                   id
                   created_at
                 }
+                version
                 first_boot_at
                 created_at
                 updated_at
@@ -247,6 +259,25 @@ export default {
         .then(response => {
           this.consoles = response.data.data.getManyConsoles;
         });
+    },
+    openAddConsoleModal: function() {
+      this.$apitator
+        .query(this, {
+          body: {
+            query: `query {
+              getConsoleVersions {
+                id
+              }
+            }`
+          }
+        })
+        .then(response => {
+          this.consoleVersions = response.data.data.getConsoleVersions.map(version => {
+            return { value: version.id, text: version.id }
+          })
+          this.toAddConsole.version = this.consoleVersions[this.consoleVersions.length - 1].value
+          this.addConsoleModal = true
+        })
     },
     storeConsole: function() {
       this.$apitator
@@ -290,6 +321,7 @@ export default {
                 id: this.toEditConsole.id,
                 color: this.toEditConsole.color,
                 storage: this.toEditConsole.storage,
+                version: this.toEditConsole.version,
                 user_id: this.toEditConsole.user_id,
                 order_id: this.toEditConsole.order_id
               }
@@ -325,9 +357,13 @@ export default {
                   id
                   created_at
                 }
+                version
                 first_boot_at
                 created_at
                 updated_at
+              }
+              getConsoleVersions {
+                id
               }
             }`,
             variables: {
@@ -339,7 +375,13 @@ export default {
           this.toEditConsole = response.data.data.getOneConsole;
           this.toEditConsole.storage = response.data.data.getOneConsole.storage;
           this.toEditConsole.user_id = response.data.data.getOneConsole.user.id;
-          this.toEditConsole.order_id = response.data.data.getOneConsole.order.id;
+          this.toEditConsole.version = response.data.data.getOneConsole.version;
+          this.consoleVersions = response.data.data.getConsoleVersions.map(version => {
+            return { value: version.id, text: version.id }
+          });
+          if (response.data.data.getOneConsole.order !== null) {
+            this.toEditConsole.order_id = response.data.data.getOneConsole.order.id;
+          }
         });
       this.editConsoleModal = true;
     },
