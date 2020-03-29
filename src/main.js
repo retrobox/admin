@@ -47,6 +47,9 @@ Vue.filter('flag', function (value) {
 Vue.filter('fromNow', function (value) {
   return Moment(value).fromNow()
 });
+Vue.filter('subDate', function (value) {
+  return value.substring(0, value.length - 3)
+});
 
 Vue.component('create-update', CreateUpdate);
 

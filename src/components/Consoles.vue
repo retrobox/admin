@@ -25,7 +25,7 @@
         </td>
         <td>{{ props.item.storage }}</td>
         <td :style="'color:' + props.item.color">{{ props.item.color }}</td>
-        <td>{{ props.item.created_at }}</td>
+        <td>{{ props.item.created_at|subDate }}</td>
         <td class="justify-end align-center layout px-2">
           <v-btn icon small @click="viewConsoleDialog = true; toViewConsole = props.item">
             <v-icon small>info</v-icon>
