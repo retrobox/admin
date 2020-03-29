@@ -159,7 +159,7 @@
         validations: {
           name: { required, maxLength: maxLength(40) },
           show_version: { required },
-          identifier: { required, maxLength: maxLength(40) },
+          identifier: { maxLength: maxLength(40) },
           description_short: { required, maxLength: maxLength(40)},
           description_long: { required },
           version: { maxLength: maxLength(30) },
