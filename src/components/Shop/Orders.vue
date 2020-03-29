@@ -202,6 +202,20 @@
 
             <v-divider inset></v-divider>
 
+            <v-list-tile class="auto-height" v-if="viewOrder.note !== null && viewOrder.note !== ''">
+              <v-list-tile-action>
+                <v-icon>speaker_notes</v-icon>
+              </v-list-tile-action>
+              <v-list-tile-content>
+                <v-list-tile-title>Order note</v-list-tile-title>
+                <v-list-tile-sub-title>
+                  {{viewOrder.note}}
+                </v-list-tile-sub-title>
+              </v-list-tile-content>
+            </v-list-tile>
+
+            <v-divider inset></v-divider>
+
             <v-list-tile>
               <v-list-tile-action>
                 <v-icon>shopping_cart</v-icon>
@@ -399,9 +413,6 @@
         if (!value) return '';
         value = value.toString();
         return value.charAt(0).toUpperCase() + value.slice(1)
-      },
-      subDate: function (value) {
-        return value.substring(0, value.length - 3)
       }
     },
     methods: {
@@ -461,6 +472,7 @@
                       updated_at
                       on_way_id
                       status
+                      note
                       user {
                           first_name
                           last_name
@@ -563,3 +575,15 @@
     }
   }
 </script>
+
+<style>
+.auto-height .v-list__tile {
+  height: auto !important;
+  padding-top: 1em !important;
+  padding-bottom: 1em !important;
+}
+.auto-height .v-list__tile__sub-title {
+  overflow: inherit;
+  white-space: inherit;
+}
+</style>
