@@ -52,40 +52,53 @@
 
           <v-layout justify-space-between row wrap>
             <v-flex md5>
-          <v-text-field
-            prepend-icon="monetization_on"
-            type="number"
-            v-model="price"
-            :error-messages="priceErrors"
-            label="Price"
-            required
-            @input="$v.price.$touch()"
-            @blur="$v.price.$touch()"
-          ></v-text-field>
-        </v-flex>
+              <v-text-field
+                prepend-icon="monetization_on"
+                type="number"
+                v-model="price"
+                :error-messages="priceErrors"
+                label="Price"
+                required
+                @input="$v.price.$touch()"
+                @blur="$v.price.$touch()"
+              ></v-text-field>
+            </v-flex>
+            <v-flex md5>
+              <v-text-field
+                prepend-icon="local_shipping"
+                type="number"
+                v-model="weight"
+                :error-messages="weightErrors"
+                label="Weight"
+                required
+                @input="$v.weight.$touch()"
+                @blur="$v.weight.$touch()"
+              ></v-text-field>
+            </v-flex>
+          </v-layout>
 
-        <v-flex md5>
-          <v-text-field
-            prepend-icon="local_shipping"
-            type="number"
-            v-model="weight"
-            :error-messages="weightErrors"
-            label="Weight"
-            required
-            @input="$v.weight.$touch()"
-            @blur="$v.weight.$touch()"
-          ></v-text-field>
-          </v-flex>
-        </v-layout>
-
-          <v-checkbox
-            v-model="show_version"
-            :error-messages="showVersionErrors"
-            label="Show version ?"
-            required
-            @change="$v.show_version.$touch()"
-            @blur="$v.show_version.$touch()"
-          ></v-checkbox>
+          <v-layout justify-space-between row wrap>
+            <v-flex md5>
+              <v-checkbox
+                v-model="show_version"
+                :error-messages="showVersionErrors"
+                label="Show version ?"
+                required
+                @change="$v.show_version.$touch()"
+                @blur="$v.show_version.$touch()"
+              ></v-checkbox>
+            </v-flex>
+            <v-flex md5>
+              <v-checkbox
+                v-model="allow_indexing"
+                :error-messages="allowIndexingErrors"
+                label="Allow indexing ?"
+                required
+                @change="$v.allow_indexing.$touch()"
+                @blur="$v.allow_indexing.$touch()"
+              ></v-checkbox>
+            </v-flex>
+          </v-layout>
 
           <v-text-field
             v-model="image"
@@ -154,6 +167,7 @@
         validations: {
           name: { required, maxLength: maxLength(40) },
           show_version: { required },
+          allow_indexing: { required },
           description_short: { required, maxLength: maxLength(40)},
           description_long: { required },
           version: { maxLength: maxLength(30) },
@@ -167,6 +181,7 @@
             return {
               name: '',
               show_version: false,
+              allow_indexing: false,
               identifier: '',
               description_short: '',
               description_long: '',
@@ -180,6 +195,9 @@
         },
         computed: {
           showVersionErrors () {
+            return []
+          },
+          allowIndexingErrors () {
             return []
           },
           nameErrors () {
@@ -265,6 +283,7 @@
                             image: this.image,
                             version: this.version,
                             show_version: this.show_version,
+                            allow_indexing: this.allow_indexing,
                             category_id: this.$route.params.id,
                             images: this.galery_images.map((item) => {
                               var is_main = this.galery_images.indexOf(item) == 0

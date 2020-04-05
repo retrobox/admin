@@ -57,40 +57,53 @@
 
           <v-layout justify-space-between row wrap>
             <v-flex md5>
-          <v-text-field
-            prepend-icon="monetization_on"
-            type="number"
-            v-model="price"
-            :error-messages="priceErrors"
-            label="Price"
-            required
-            @input="$v.price.$touch()"
-            @blur="$v.price.$touch()"
-          ></v-text-field>
-        </v-flex>
+              <v-text-field
+                prepend-icon="monetization_on"
+                type="number"
+                v-model="price"
+                :error-messages="priceErrors"
+                label="Price"
+                required
+                @input="$v.price.$touch()"
+                @blur="$v.price.$touch()"
+              ></v-text-field>
+            </v-flex>
+            <v-flex md5>
+              <v-text-field
+                prepend-icon="local_shipping"
+                type="number"
+                v-model="weight"
+                :error-messages="weightErrors"
+                label="Weight"
+                required
+                @input="$v.weight.$touch()"
+                @blur="$v.weight.$touch()"
+              ></v-text-field>
+            </v-flex>
+          </v-layout>
 
-        <v-flex md5>
-          <v-text-field
-            prepend-icon="local_shipping"
-            type="number"
-            v-model="weight"
-            :error-messages="weightErrors"
-            label="Weight"
-            required
-            @input="$v.weight.$touch()"
-            @blur="$v.weight.$touch()"
-          ></v-text-field>
-          </v-flex>
-        </v-layout>
-
-          <v-checkbox
-            v-model="show_version"
-            :error-messages="showVersionErrors"
-            label="Show version ?"
-            required
-            @change="$v.show_version.$touch()"
-            @blur="$v.show_version.$touch()"
-          ></v-checkbox>
+          <v-layout justify-space-between row wrap>
+            <v-flex md5>
+              <v-checkbox
+                v-model="show_version"
+                :error-messages="showVersionErrors"
+                label="Show version ?"
+                required
+                @change="$v.show_version.$touch()"
+                @blur="$v.show_version.$touch()"
+              ></v-checkbox>
+            </v-flex>
+            <v-flex md5>
+              <v-checkbox
+                v-model="allow_indexing"
+                :error-messages="allowIndexingErrors"
+                label="Allow indexing ?"
+                required
+                @change="$v.allow_indexing.$touch()"
+                @blur="$v.allow_indexing.$touch()"
+              ></v-checkbox>
+            </v-flex>
+          </v-layout>
 
           <v-text-field
             v-model="image"
@@ -159,6 +172,7 @@
         validations: {
           name: { required, maxLength: maxLength(40) },
           show_version: { required },
+          allow_indexing: { required },
           identifier: { maxLength: maxLength(40) },
           description_short: { required, maxLength: maxLength(40)},
           description_long: { required },
@@ -176,6 +190,7 @@
               description_short: '',
               description_long: '',
               version: '',
+              allow_indexing: '',
               weight: 10.00,
               price: 10.00,
               image: '',
@@ -186,6 +201,9 @@
         },
         computed: {
           showVersionErrors () {
+            return []
+          },
+          allowIndexingErrors () {
             return []
           },
           nameErrors () {
@@ -266,6 +284,7 @@
                       version,
                       identifier,
                       show_version,
+                      allow_indexing,
                       images{id, url, is_main},
                       category{id, title, is_customizable}
                     }
@@ -285,6 +304,7 @@
                 this.version = item.version
                 this.identifier = item.identifier
                 this.show_version = item.show_version
+                this.allow_indexing = item.allow_indexing
                 this.category = item.category
                 this.galery_images = item.images.map((item) => {
                   return item.url
@@ -313,6 +333,7 @@
                             identifier: this.identifier,
                             show_version: this.show_version,
                             category_id: this.category.id,
+                            allow_indexing: this.allow_indexing,
                             images: this.galery_images.map((item) => {
                               var is_main = this.galery_images.indexOf(item) == 0
                               return {url: item, is_main: is_main}})

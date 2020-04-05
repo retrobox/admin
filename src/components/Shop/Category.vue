@@ -178,6 +178,17 @@
             </v-list-tile-content>
           </v-list-tile>
 
+          <v-list-tile @click="">
+            <v-list-tile-action />
+            <v-list-tile-content>
+              <v-list-tile-title>
+                <span v-if="toViewItem.allow_indexing">Allow indexing</span>
+                <span v-else>Don't allow indexing</span>
+              </v-list-tile-title>
+              <v-list-tile-sub-title>Allow indexing ?</v-list-tile-sub-title>
+            </v-list-tile-content>
+          </v-list-tile>
+
           <v-divider inset></v-divider>
 
           <v-list-tile @click="">
@@ -316,7 +327,11 @@ export default {
     viewItem(item) {
       this.$apitator.query(this, {
         body: {
-          query: `query ($id: String!){getOneShopItem(id: $id){title, price, version, id, weight, description_short, image, created_at, updated_at}}`,
+          query: `query ($id: String!) {
+            getOneShopItem(id: $id) {
+              title, price, version, id, weight, description_short, image, created_at, updated_at, show_version, allow_indexing
+            }
+          }`,
           variables: {
             id: item.id
           }

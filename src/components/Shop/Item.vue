@@ -63,6 +63,17 @@
           <v-list-tile-action />
           <v-list-tile-content>
             <v-list-tile-title>
+              <span v-if="item.allow_indexing">Allow indexing</span>
+              <span v-else>Don't allow indexing</span>
+            </v-list-tile-title>
+            <v-list-tile-sub-title>Allow indexing ?</v-list-tile-sub-title>
+          </v-list-tile-content>
+        </v-list-tile>
+
+        <v-list-tile @click="">
+          <v-list-tile-action />
+          <v-list-tile-content>
+            <v-list-tile-title>
               {{item.slug}}
             </v-list-tile-title>
             <v-list-tile-sub-title>Slug</v-list-tile-sub-title>
@@ -242,6 +253,7 @@ export default {
               image,
               version,
               show_version,
+              allow_indexing,
               images{id, url, is_main},
               category{id, title, is_customizable}
             }
