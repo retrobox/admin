@@ -20,7 +20,9 @@ export default class requestContainer {
             headers: headers
         })
         return new Promise((resolve, reject) => {
-            VueLocal.$store.commit('SET_LOADING', true)
+            if (options.loading === undefined) {
+                VueLocal.$store.commit('SET_LOADING', true)
+            }
             axios.get(this.options.rootUrl + url, params)
                 .then((response) => {
                     if (options.loading_persit == false || options.loading_persit == undefined) {
@@ -106,6 +108,7 @@ export default class requestContainer {
         })
         VueLocal.$store.commit('SET_LOADING_TYPE', loading_type)
         VueLocal.$store.commit('SET_LOADING', true)
+        console.log(params)
 
         return new Promise((resolve, reject) => {
             axios
