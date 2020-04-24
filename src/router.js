@@ -20,6 +20,7 @@ import ShopCategoryEdit from './components/Shop/CategoryEdit.vue'
 import ShopCategoryCreate from './components/Shop/CategoryCreate.vue'
 import ShopOrders from './components/Shop/Orders.vue'
 import Consoles from './components/Consoles.vue'
+import ConsoleImages from './components/ConsoleImages.vue'
 
 //Games
 import Games from './components/Games/Games.vue'
@@ -173,6 +174,11 @@ export default new Router({
         path: '/consoles',
         name: 'Consoles',
         component: Consoles
+    },
+    {
+        path: '/console-images',
+        name: 'ConsoleImages',
+        component: ConsoleImages
     }
   ]
 })

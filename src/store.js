@@ -65,6 +65,12 @@ export const store = new Vuex.Store({
         icon: "videogame_asset",
         indexRoute: {name: "Consoles"},
         subNav: false
+      },
+      {
+        title: "Console images",
+        icon: "burst_mode",
+        indexRoute: {name: "ConsoleImages"},
+        subNav: false
       }
     ]
   },
