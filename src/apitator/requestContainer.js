@@ -108,8 +108,6 @@ export default class requestContainer {
         })
         VueLocal.$store.commit('SET_LOADING_TYPE', loading_type)
         VueLocal.$store.commit('SET_LOADING', true)
-        console.log(params)
-
         return new Promise((resolve, reject) => {
             axios
                 .post(this.options.graphQLUrl, params.body, params)
@@ -126,7 +124,7 @@ export default class requestContainer {
                         if (params.alert_on_error != false) {
                             VueLocal.$store.commit('ADD_ALERT', {
                                 color: "error",
-                                text: "Erreur pendant la connexion à l'API"
+                                text: "Error with the API, please open the console"
                             })
                         }
 
