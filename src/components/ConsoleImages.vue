@@ -20,6 +20,18 @@
         <td>{{ props.item.console_version }}</td>
         <td>{{ props.item.software_version }}</td>
         <td>{{ props.item.version }}</td>
+        <td>
+          <span
+            v-if="props.item.is_available"
+            class="green--text">
+            PUBLIC
+          </span>
+          <span
+            v-else
+            class="red--text">
+            PRIVATE
+          </span>
+        </td>
         <td>{{ props.item.created_at|subDate }}</td>
         <td class="justify-end align-center layout px-2">
           <v-btn icon small @click="viewImageDialog = true; toViewImage = props.item">
@@ -93,6 +105,30 @@
 
             <v-divider inset></v-divider>
 
+            <v-list-tile @click="$copyText(toViewImage.size)" ripple>
+              <v-list-tile-action>
+                <v-icon>attachment</v-icon>
+              </v-list-tile-action>
+              <v-list-tile-content>
+                <v-list-tile-title>{{toViewImage.size_formated}}</v-list-tile-title>
+                <v-list-tile-sub-title>Size in megabytes</v-list-tile-sub-title>
+              </v-list-tile-content>
+            </v-list-tile>
+
+            <v-divider inset></v-divider>
+
+            <v-list-tile @click="$copyText(toViewImage.hash)" ripple>
+              <v-list-tile-action>
+                <v-icon>fingerprint</v-icon>
+              </v-list-tile-action>
+              <v-list-tile-content>
+                <v-list-tile-title>{{toViewImage.hash}}</v-list-tile-title>
+                <v-list-tile-sub-title>SHA-256 Hash</v-list-tile-sub-title>
+              </v-list-tile-content>
+            </v-list-tile>
+
+            <v-divider inset></v-divider>
+
             <create-update :item="toViewImage" />
           </v-list>
         </v-card-text>
@@ -113,7 +149,25 @@
             <v-text-field 
               label="Software version"
               v-model="toAddImage.software_version" />
+            <v-text-field
+              label="SHA-256 Hash"
+              hint="Must be 64 characters long"
+              persistent-hint
+              v-model="toAddImage.hash" />
+            <v-text-field
+              class="mt-3"
+              type="number"
+              label="The image zip file size in megabytes"
+              :hint="humanizeSize(toAddImage.size * 10**6)"
+              persistent-hint
+              v-model="toAddImage.size" />
+            <v-switch
+              label="Mark the image as 'available'"
+              hint="If true, the image will show up on the desktop app"
+              persistent-hint
+              v-model="toAddImage.is_available" />
             <v-textarea
+              class="mt-3"
               label="Description"
               v-model="toAddImage.description" />
           </v-form>
@@ -132,7 +186,25 @@
             <v-text-field 
               label="Software version"
               v-model="toEditImage.software_version" />
+            <v-text-field
+              label="SHA-256 Hash"
+              hint="Must be 64 characters long"
+              persistent-hint
+              v-model="toEditImage.hash" />
+            <v-text-field
+              class="mt-3"
+              type="number"
+              label="The image zip file size in megabytes"
+              :hint="humanizeSize(toEditImage.size * 10**6)"
+              persistent-hint
+              v-model="toEditImage.size" />
+            <v-switch
+              label="Mark the image as 'available'"
+              hint="If true, the image will show up on the desktop app"
+              persistent-hint
+              v-model="toEditImage.is_available" />
             <v-textarea
+              class="mt-3"
               label="Description"
               v-model="toEditImage.description" />
           </v-form>
@@ -189,6 +261,11 @@ export default {
           value: "color"
         },
         {
+          text: "Public?",
+          align: "left",
+          sortable: false,
+        },
+        {
           text: "Created at",
           align: "left",
           sortable: true,
@@ -212,18 +289,35 @@ export default {
     onMounted: function() {
       this.fetchData();
     },
+    humanizeSize: function(bytes) {
+      var thresh = 1000;
+      if (Math.abs(bytes) < thresh) {
+          return bytes + ' B'
+      }
+      var units = ['kB','MB','GB','TB','PB','EB','ZB','YB']
+      var u = -1
+      do {
+          bytes /= thresh
+          ++u;
+      } while(Math.abs(bytes) >= thresh && u < units.length - 1)
+      return bytes.toFixed(1) + ' ' + units[u]
+    },
     fetchData: function() {
       this.$store.commit("SET_LOADING", true);
       this.$apitator
         .query(this, {
           body: {
             query: `query {
-              getManyConsoleImages {
+              getManyConsoleImages(all: true) {
                 id
                 console_version
                 software_version
                 version
+                hash
+                size
+                is_available
                 description
+                url
                 created_at
                 updated_at
               }
@@ -231,8 +325,11 @@ export default {
           }
         })
         .then(response => {
-          this.images = response.data.data.getManyConsoleImages;
-        });
+          this.images = response.data.data.getManyConsoleImages.map(image => {
+            image.size_formated = this.humanizeSize(image.size * 10**6)
+            return image
+          })
+        })
     },
     openAddImageModal: function() {
       this.$apitator
@@ -256,11 +353,7 @@ export default {
               }
             }`,
             variables: {
-              image: {
-                console_version: this.toAddImage.console_version,
-                software_version: this.toAddImage.software_version,
-                description: this.toAddImage.description
-              }
+              image: this.toAddImage
             }
           }
         })
@@ -284,6 +377,9 @@ export default {
               image: {
                 id: this.toEditImage.id,
                 software_version: this.toEditImage.software_version,
+                size: this.toEditImage.size,
+                hash: this.toEditImage.hash,
+                is_available: this.toEditImage.is_available,
                 description: this.toEditImage.description
               }
             }
@@ -328,7 +424,7 @@ export default {
       })
     },
     downloadImage(image) {
-      console.log(image)
+      window.open(image.url, '_blank').focus()
     }
   },
   created() {
