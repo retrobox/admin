@@ -1,10 +1,10 @@
 <template>
   <div>
-    <v-content>
+    <v-main>
       <v-container fill-height>
         <v-layout
-                justify-center
-                align-center
+          justify-center
+          align-center
         >
           <v-flex text-xs-center>
             <h1>Déconnexion réussi :)</h1>
@@ -13,12 +13,13 @@
           </v-flex>
         </v-layout>
       </v-container>
-    </v-content>
+    </v-main>
   </div>
 </template>
+
 <script>
 export default {
-  created(){
+  created () {
     this.$store.commit('SET_LAYOUT', 'center')
   }
 }

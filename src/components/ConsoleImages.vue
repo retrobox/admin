@@ -1,131 +1,126 @@
 <template>
   <div class="consoles">
-    <v-layout align-center justify-space-between row fill-height>
-      <div class="px-3">
-        <span v-if="images.length > 0">{{ images.length }} console image(s)</span>
-      </div>
-      <v-layout align-center justify-end row fill-height>
-        <v-btn icon @click="fetchData()">
-          <v-icon>refresh</v-icon>
+    <v-data-table :headers="headers" :items="images" hide-default-footer class="elevation-1">
+      <template v-slot:top>
+        <v-toolbar flat>
+          <span class="px-3" v-if="images.length > 0">{{ images.length }} console image(s)</span>
+          <v-spacer />
+          <v-btn icon color="info" @click="fetchData()">
+            <v-icon>refresh</v-icon>
+          </v-btn>
+          <v-btn icon color="success" @click="openAddImageModal()">
+            <v-icon>add</v-icon>
+          </v-btn>
+        </v-toolbar>
+      </template>
+      <template v-slot:item.is_available="{ item }">
+        <span
+          v-if="item.is_available"
+          class="green--text">
+          PUBLIC
+        </span>
+        <span
+          v-else
+          class="red--text">
+          PRIVATE
+        </span>
+      </template>
+      <template v-slot:item.created_at="{ item }">
+        {{ item.created_at|subDate }}
+      </template>
+      <template v-slot:item.actions="{ item }">
+        <v-btn icon small @click="viewImageDialog = true; toViewImage = item">
+          <v-icon small>info</v-icon>
         </v-btn>
-        <v-btn icon @click="openAddImageModal()">
-          <v-icon>add</v-icon>
+        <v-btn icon small @click="downloadImage(item)">
+          <v-icon small>get_app</v-icon>
         </v-btn>
-      </v-layout>
-    </v-layout>
-
-    <v-data-table :headers="headers" :items="images" hide-actions class="elevation-1">
-      <template slot="items" slot-scope="props">
-        <td>{{ props.item.id }}</td>
-        <td>{{ props.item.console_version }}</td>
-        <td>{{ props.item.software_version }}</td>
-        <td>{{ props.item.version }}</td>
-        <td>
-          <span
-            v-if="props.item.is_available"
-            class="green--text">
-            PUBLIC
-          </span>
-          <span
-            v-else
-            class="red--text">
-            PRIVATE
-          </span>
-        </td>
-        <td>{{ props.item.created_at|subDate }}</td>
-        <td class="justify-end align-center layout px-2">
-          <v-btn icon small @click="viewImageDialog = true; toViewImage = props.item">
-            <v-icon small>info</v-icon>
-          </v-btn>
-          <v-btn icon small @click="editImage(props.item)">
-            <v-icon small>edit</v-icon>
-          </v-btn>
-          <v-btn icon small @click="downloadImage(props.item)">
-            <v-icon small>get_app</v-icon>
-          </v-btn>
-          <v-btn icon small @click="openDestroyImageModal(props.item)">
-            <v-icon small color="error">delete</v-icon>
-          </v-btn>
-        </td>
+        <v-btn icon small color="info" @click="editImage(item)">
+          <v-icon small>edit</v-icon>
+        </v-btn>
+        <v-btn icon small color="error" @click="openDestroyImageModal(item)">
+          <v-icon small color="error">delete</v-icon>
+        </v-btn>
       </template>
     </v-data-table>
     <v-dialog v-model="viewImageDialog" max-width="500px">
       <v-card>
+        <v-card-title>Image details</v-card-title>
         <v-card-text>
           <v-list two-line>
-            <v-list-tile @click="$copyText(toViewImage.id)" ripple>
-              <v-list-tile-action>
+            <v-list-item @click="$copyText(toViewImage.id)" ripple>
+              <v-list-item-action>
                 <v-icon>label</v-icon>
-              </v-list-tile-action>
-              <v-list-tile-content>
-                <v-list-tile-title>{{toViewImage.id}}</v-list-tile-title>
-                <v-list-tile-sub-title>API Id</v-list-tile-sub-title>
-              </v-list-tile-content>
-            </v-list-tile>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>{{ toViewImage.id }}</v-list-item-title>
+                <v-list-item-subtitle>API Id</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
 
             <v-divider inset></v-divider>
 
-            <v-list-tile @click="$copyText(toViewImage.version)" ripple>
-              <v-list-tile-action>
+            <v-list-item @click="$copyText(toViewImage.version)" ripple>
+              <v-list-item-action>
                 <v-icon>label</v-icon>
-              </v-list-tile-action>
-              <v-list-tile-content>
-                <v-list-tile-title>{{toViewImage.version}}</v-list-tile-title>
-                <v-list-tile-sub-title>Version slug</v-list-tile-sub-title>
-              </v-list-tile-content>
-            </v-list-tile>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>{{toViewImage.version}}</v-list-item-title>
+                <v-list-item-subtitle>Version slug</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
 
-            <v-list-tile @click="$copyText(toViewImage.console_version)" ripple>
-              <v-list-tile-action />
-              <v-list-tile-content>
-                <v-list-tile-title>{{toViewImage.console_version}}</v-list-tile-title>
-                <v-list-tile-sub-title>Console version</v-list-tile-sub-title>
-              </v-list-tile-content>
-            </v-list-tile>
+            <v-list-item @click="$copyText(toViewImage.console_version)" ripple>
+              <v-list-item-action />
+              <v-list-item-content>
+                <v-list-item-title>{{ toViewImage.console_version }}</v-list-item-title>
+                <v-list-item-subtitle>Console version</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
 
-            <v-list-tile @click="$copyText(toViewImage.software_version)" ripple>
-              <v-list-tile-action />
-              <v-list-tile-content>
-                <v-list-tile-title>{{toViewImage.software_version}}</v-list-tile-title>
-                <v-list-tile-sub-title>Software version</v-list-tile-sub-title>
-              </v-list-tile-content>
-            </v-list-tile>
+            <v-list-item @click="$copyText(toViewImage.software_version)" ripple>
+              <v-list-item-action />
+              <v-list-item-content>
+                <v-list-item-title>{{ toViewImage.software_version }}</v-list-item-title>
+                <v-list-item-subtitle>Software version</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
 
             <v-divider inset></v-divider>
 
-            <v-list-tile @click="$copyText(toViewImage.description)" ripple>
-              <v-list-tile-action>
+            <v-list-item @click="$copyText(toViewImage.description)" ripple>
+              <v-list-item-action>
                 <v-icon>description</v-icon>
-              </v-list-tile-action>
-              <v-list-tile-content>
-                <v-list-tile-title>{{toViewImage.description}}</v-list-tile-title>
-                <v-list-tile-sub-title>Description</v-list-tile-sub-title>
-              </v-list-tile-content>
-            </v-list-tile>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>{{ toViewImage.description }}</v-list-item-title>
+                <v-list-item-subtitle>Description</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
 
             <v-divider inset></v-divider>
 
-            <v-list-tile @click="$copyText(toViewImage.size)" ripple>
-              <v-list-tile-action>
+            <v-list-item @click="$copyText(toViewImage.size)" ripple>
+              <v-list-item-action>
                 <v-icon>attachment</v-icon>
-              </v-list-tile-action>
-              <v-list-tile-content>
-                <v-list-tile-title>{{toViewImage.size_formated}}</v-list-tile-title>
-                <v-list-tile-sub-title>Size in megabytes</v-list-tile-sub-title>
-              </v-list-tile-content>
-            </v-list-tile>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>{{ toViewImage.size_formated }}</v-list-item-title>
+                <v-list-item-subtitle>Size in megabytes</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
 
             <v-divider inset></v-divider>
 
-            <v-list-tile @click="$copyText(toViewImage.hash)" ripple>
-              <v-list-tile-action>
+            <v-list-item @click="$copyText(toViewImage.hash)" ripple>
+              <v-list-item-action>
                 <v-icon>fingerprint</v-icon>
-              </v-list-tile-action>
-              <v-list-tile-content>
-                <v-list-tile-title>{{toViewImage.hash}}</v-list-tile-title>
-                <v-list-tile-sub-title>SHA-256 Hash</v-list-tile-sub-title>
-              </v-list-tile-content>
-            </v-list-tile>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>{{ toViewImage.hash }}</v-list-item-title>
+                <v-list-item-subtitle>SHA-256 Hash</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
 
             <v-divider inset></v-divider>
 
@@ -133,7 +128,8 @@
           </v-list>
         </v-card-text>
         <v-card-actions>
-          <v-btn color="primary" flat @click.stop="viewImageDialog = false">Close</v-btn>
+          <v-spacer />
+          <v-btn color="primary" text @click.stop="viewImageDialog = false">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -142,11 +138,11 @@
         <v-card-title>Create a new version</v-card-title>
         <v-card-text>
           <v-form>
-            <v-select 
+            <v-select
               :items="consoleVersions"
               label="Console version"
               v-model="toAddImage.console_version" />
-            <v-text-field 
+            <v-text-field
               label="Software version"
               v-model="toAddImage.software_version" />
             <v-text-field
@@ -158,7 +154,7 @@
               class="mt-3"
               type="number"
               label="The image zip file size in megabytes"
-              :hint="humanizeSize(toAddImage.size * 10**6)"
+              :hint="humanizeSize(toAddImage.size * 10 ** 6)"
               persistent-hint
               v-model="toAddImage.size" />
             <v-switch
@@ -173,7 +169,8 @@
           </v-form>
         </v-card-text>
         <v-card-actions>
-          <v-btn flat color="primary" @click="storeImage()">Submit</v-btn>
+          <v-spacer />
+          <v-btn text color="primary" @click="storeImage()">Submit</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -183,7 +180,7 @@
         <v-card-text>
           <v-form>
             <v-text-field disabled label="ID" v-model="toEditImage.id" />
-            <v-text-field 
+            <v-text-field
               label="Software version"
               v-model="toEditImage.software_version" />
             <v-text-field
@@ -210,7 +207,8 @@
           </v-form>
         </v-card-text>
         <v-card-actions>
-          <v-btn flat color="primary" @click="updateImage()">Save</v-btn>
+          <v-spacer />
+          <v-btn text color="primary" @click="updateImage()">Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -222,7 +220,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn flat color="error" @click="destroyImage()">Yes</v-btn>
+          <v-btn text color="error" @click="destroyImage()">Yes</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -231,79 +229,79 @@
 
 <script>
 export default {
-  data() {
-    return {
-      toViewImage: {},
-      viewImageDialog: false,
-      images: [],
-      headers: [
-        {
-          text: "Id",
-          align: "left",
-          sortable: false,
-          value: "id"
-        },
-        {
-          text: "Console version",
-          align: "left",
-          sortable: false
-        },
-        {
-          text: "Software version",
-          align: "left",
-          sortable: false,
-          value: "storage"
-        },
-        {
-          text: "Version",
-          align: "left",
-          sortable: false,
-          value: "color"
-        },
-        {
-          text: "Public?",
-          align: "left",
-          sortable: false,
-        },
-        {
-          text: "Created at",
-          align: "left",
-          sortable: true,
-          value: "created_at"
-        },
-        { text: "Actions", value: "id", sortable: false, align: "right" }
-      ],
-      addImageModal: false,
-      toAddImage: {
-        console_version: "",
-        software_version: ""
+  data: () => ({
+    toViewImage: {},
+    viewImageDialog: false,
+    images: [],
+    headers: [
+      {
+        text: 'Id',
+        align: 'left',
+        sortable: false,
+        value: 'id'
       },
-      editImageModal: false,
-      toEditImage: {},
-      destroyImageModal: false,
-      toDestroyImage: {},
-      consoleVersions: []
-    };
-  },
-  methods: {
-    onMounted: function() {
-      this.fetchData();
+      {
+        text: 'Console version',
+        align: 'left',
+        sortable: false,
+        value: 'console_version'
+      },
+      {
+        text: 'Software version',
+        align: 'left',
+        sortable: false,
+        value: 'software_version'
+      },
+      {
+        text: 'Version',
+        align: 'left',
+        sortable: false,
+        value: 'version'
+      },
+      {
+        text: 'Public?',
+        align: 'left',
+        sortable: false,
+        value: 'is_available'
+      },
+      {
+        text: 'Created at',
+        align: 'left',
+        sortable: true,
+        value: 'created_at'
+      },
+      { text: 'Actions', value: 'actions', sortable: false, align: 'right' }
+    ],
+    addImageModal: false,
+    toAddImage: {
+      console_version: '',
+      software_version: ''
     },
-    humanizeSize: function(bytes) {
-      var thresh = 1000;
+    editImageModal: false,
+    toEditImage: {},
+    destroyImageModal: false,
+    toDestroyImage: {},
+    consoleVersions: []
+  }),
+  methods: {
+    onMounted () {
+      this.fetchData()
+    },
+    humanizeSize (bytes) {
+      var thresh = 1000
       if (Math.abs(bytes) < thresh) {
-          return bytes + ' B'
+        return bytes + ' B'
       }
-      var units = ['kB','MB','GB','TB','PB','EB','ZB','YB']
+      var units = ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
       var u = -1
       do {
-          bytes /= thresh
-          ++u;
-      } while(Math.abs(bytes) >= thresh && u < units.length - 1)
+        bytes /= thresh
+        ++u
+      } while (Math.abs(bytes) >= thresh && u < units.length - 1)
       return bytes.toFixed(1) + ' ' + units[u]
     },
-    fetchData: function() {
-      this.$store.commit("SET_LOADING", true);
+    fetchData () {
+      this.$store.commit('SET_LOADING', true)
       this.$apitator
         .query(this, {
           body: {
@@ -326,14 +324,14 @@ export default {
         })
         .then(response => {
           this.images = response.data.data.getManyConsoleImages.map(image => {
-            image.size_formated = this.humanizeSize(image.size * 10**6)
+            image.size_formated = this.humanizeSize(image.size * 10 ** 6)
             return image
           })
         })
     },
-    openAddImageModal: function() {
+    openAddImageModal () {
       this.$apitator
-        .query(this, { body: { query: `query { getConsoleVersions { id } }` } })
+        .query(this, { body: { query: 'query { getConsoleVersions { id } }' } })
         .then(response => {
           this.consoleVersions = response.data.data.getConsoleVersions.map(version => {
             return { value: version.id, text: version.id }
@@ -342,7 +340,7 @@ export default {
           this.addImageModal = true
         })
     },
-    storeImage: function() {
+    storeImage () {
       this.$apitator
         .query(this, {
           body: {
@@ -358,15 +356,15 @@ export default {
           }
         })
         .then(response => {
-          this.$store.commit("ADD_ALERT", {
-            color: "success",
-            text: "Created a console image!"
-          });
-          this.addImageModal = false;
-          this.fetchData();
-        });
+          this.$store.commit('ADD_ALERT', {
+            color: 'success',
+            text: 'Created a console image!'
+          })
+          this.addImageModal = false
+          this.fetchData()
+        })
     },
-    updateImage: function() {
+    updateImage () {
       this.$apitator
         .query(this, {
           body: {
@@ -386,23 +384,23 @@ export default {
           }
         })
         .then(response => {
-          this.$store.commit("ADD_ALERT", {
-            color: "success",
-            text: "Updated a console image!"
-          });
-          this.editImageModal = false;
-          this.fetchData();
-        });
+          this.$store.commit('ADD_ALERT', {
+            color: 'success',
+            text: 'Updated a console image!'
+          })
+          this.editImageModal = false
+          this.fetchData()
+        })
     },
-    editImage: function(image) {
-      this.editImageModal = true;
-      this.toEditImage = image;
+    editImage (image) {
+      this.editImageModal = true
+      this.toEditImage = image
     },
-    openDestroyImageModal(item) {
+    openDestroyImageModal (item) {
       this.destroyImageModal = true
       this.toDestroyImage = item
     },
-    destroyImage() {
+    destroyImage () {
       this.$apitator.query(this, {
         body: {
           query: `mutation($id: ID!){
@@ -416,20 +414,20 @@ export default {
         this.destroyImageModal = false
         this.$store.commit('ADD_ALERT', {
           color: 'info',
-          text: "Console image destroyed!"
+          text: 'Console image destroyed!'
         })
         this.fetchData()
       }).catch(() => {
         this.destroyImageModal = false
       })
     },
-    downloadImage(image) {
+    downloadImage (image) {
       window.open(image.url, '_blank').focus()
     }
   },
-  created() {
-    this.$store.commit("SET_TITLE", "Console images");
-    this.$store.commit("SET_LAYOUT", "dashboard");
+  created () {
+    this.$store.commit('SET_TITLE', 'Console images')
+    this.$store.commit('SET_LAYOUT', 'dashboard')
   }
-};
+}
 </script>

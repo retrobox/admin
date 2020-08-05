@@ -1,12 +1,11 @@
-// The Vue build version to load with the `import` command
-// (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
-import App from './App'
+import App from './App.vue'
+import './registerServiceWorker'
+import router from './router'
+import store from './store'
+import vuetify from './plugins/vuetify'
+
 import CreateUpdate from './components/CreateUpdate.vue'
-import router from './router.js'
-import Vuetify from 'vuetify'
-import 'vuetify/dist/vuetify.min.css'
-import {store} from './store'
 import VueApitator from './apitator'
 import FlagIcon from 'vue-flag-icon'
 import Vuelidate from 'vuelidate'
@@ -14,50 +13,47 @@ import mavonEditor from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
 import VueClipboard from 'vue-clipboard2'
 import Moment from 'moment'
-let VueCookie = require('vue-cookie');
+import VueCookie from 'vue-cookie'
 
-Vue.use(VueClipboard);
-Vue.use(Vuelidate);
-Vue.use(FlagIcon);
-Vue.use(VueCookie);
-Vue.use(Vuetify);
-Vue.use(mavonEditor);
+Vue.use(VueClipboard)
+Vue.use(Vuelidate)
+Vue.use(FlagIcon)
+Vue.use(VueCookie)
+Vue.use(mavonEditor)
 Vue.use(VueApitator, {
-    rootUrl: process.env.API_ENDPOINT,
-    graphQLUrl: process.env.API_ENDPOINT + "/graphql",
-    params: {
-        timeout: 190000
-    }
-});
+  rootUrl: process.env.VUE_APP_API_ENDPOINT,
+  graphQLUrl: process.env.VUE_APP_API_ENDPOINT + '/graphql',
+  params: {
+    timeout: 190000
+  }
+})
 
-Vue.config.productionTip = false;
+Vue.config.productionTip = true
 
 Vue.filter('flag', function (value) {
-  let flag = "";
+  let flag = ''
   switch (value) {
     case 'en':
-      flag = 'gb';
-      break;
+      flag = 'gb'
+      break
 
     default:
       flag = value
   }
   return flag
-});
+})
 Vue.filter('fromNow', function (value) {
   return Moment(value).fromNow()
-});
+})
 Vue.filter('subDate', function (value) {
   return value.substring(0, value.length - 3)
-});
+})
 
-Vue.component('create-update', CreateUpdate);
+Vue.component('create-update', CreateUpdate)
 
-/* eslint-disable no-new */
 new Vue({
-  el: '#app',
   router,
   store,
-  components: { App },
-  template: '<App/>'
-})
+  vuetify,
+  render: h => h(App)
+}).$mount('#app')

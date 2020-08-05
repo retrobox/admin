@@ -11,36 +11,35 @@
 
 <script>
 export default {
-  data() {
-    return {
-      games: [],
-      headers: [{
-          text: 'Avatar',
-          align: 'left',
-          sortable: false,
-          value: 'last_avatar'
-        },
-        {
-          text: 'Username',
-          align: 'left',
-          sortable: false,
-          value: 'last_username'
-        },
-        {
-          text: 'Email',
-          align: 'left',
-          sortable: false,
-          value: 'last_email'
-        },
-        { text: 'Actions', value: 'id', sortable: false, align: 'right' }
-      ],
-    }
-  },
+  data: () => ({
+    games: [],
+    headers: [
+      {
+        text: 'Avatar',
+        align: 'left',
+        sortable: false,
+        value: 'last_avatar'
+      },
+      {
+        text: 'Username',
+        align: 'left',
+        sortable: false,
+        value: 'last_username'
+      },
+      {
+        text: 'Email',
+        align: 'left',
+        sortable: false,
+        value: 'last_email'
+      },
+      { text: 'Actions', value: 'id', sortable: false, align: 'right' }
+    ]
+  }),
   methods: {
-    onMounted: function() {
+    onMounted () {
       this.fetchData()
     },
-    fetchData: function() {
+    fetchData () {
       this.$store.commit('SET_LOADING', true)
       // this.$apitator.query(this, {
       //   body: {
@@ -51,7 +50,7 @@ export default {
       // })
     }
   },
-  created() {
+  created () {
     this.$store.commit('SET_TITLE', 'Games')
     this.$store.commit('SET_LAYOUT', 'dashboard')
   }

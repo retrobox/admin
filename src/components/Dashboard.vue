@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="ma-3">
     <div class="arrow-container">
       <v-icon class="arrow-back-icon">arrow_back</v-icon> Allez on choisit vite une ressource...
     </div>
@@ -22,26 +22,24 @@
 
 <script>
 export default {
-  data() {
-    return {
-      icons: [],
-      generateCacheLoading: false
-    }
-  },
+  data: () => ({
+    icons: [],
+    generateCacheLoading: false
+  }),
   methods: {
-    onMounted: function () {
-
-    },
-    generateCache: function () {
+    onMounted () {},
+    generateCache () {
       this.generateCacheLoading = true
       this.$apitator
-        .get(this, '/cache/shop/generate', {with_auth: true, alert_on_error: false, loading: false})
+        .get(this, '/cache/shop/generate', {
+          with_auth: true, alert_on_error: false, loading: false
+        })
         .then(response => {
           this.generateCacheLoading = false
         })
     }
   },
-  created() {
+  created () {
     this.$store.commit('SET_TITLE', 'Dashboard')
     this.$store.commit('SET_LAYOUT', 'dashboard')
   }

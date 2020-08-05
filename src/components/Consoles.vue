@@ -1,235 +1,258 @@
 <template>
-  <div class="consoles">
-    <v-layout align-center justify-space-between row fill-height>
-      <div class="px-3">
-        <span v-if="consoles.length > 0">{{ consoles.length }} console(s)</span>
-      </div>
-      <v-layout align-center justify-end row fill-height>
-        <v-btn icon @click="fetchData()">
-          <v-icon>refresh</v-icon>
-        </v-btn>
-        <v-btn icon @click="openAddConsoleModal()">
-          <v-icon>add</v-icon>
-        </v-btn>
-      </v-layout>
-    </v-layout>
-
-    <v-data-table :headers="headers" :items="consoles" hide-actions class="elevation-1">
-      <template slot="items" slot-scope="props">
-        <td>{{ props.item.id }}</td>
-        <td>
-          <v-avatar size="20" class="mr-2">
-            <img :src="props.item.user.last_avatar" alt />
-          </v-avatar>
-          {{ props.item.user.last_username }}
-        </td>
-        <td>{{ props.item.storage }}</td>
-        <td :style="'color:' + props.item.color">{{ props.item.color }}</td>
-        <td>{{ props.item.created_at|subDate }}</td>
-        <td class="justify-end align-center layout px-2">
-          <v-btn icon small @click="viewConsoleDialog = true; toViewConsole = props.item">
-            <v-icon small>info</v-icon>
+<div class="consoles">
+  <v-data-table :headers="headers" :items="consoles" hide-default-footer class="elevation-1">
+    <template v-slot:top>
+      <v-toolbar flat>
+        <div class="px-3">
+          <span v-if="consoles.length > 0">{{ consoles.length }} console(s)</span>
+        </div>
+        <v-layout align-center justify-end row fill-height>
+          <v-btn icon color="info" class="mr-2" @click="fetchData()">
+            <v-icon>refresh</v-icon>
           </v-btn>
-          <v-btn icon small @click="editConsole(props.item)">
-            <v-icon small>edit</v-icon>
+          <v-btn icon color="success" @click="openAddConsoleModal()">
+            <v-icon>add</v-icon>
           </v-btn>
-          <v-tooltip top v-if="props.item.order !== null">
-            <v-btn
-              slot="activator"
-              icon
-              small
-              @click="$router.push({ name: 'ShopOrders', query: { id: props.item.order.id }})"
-            >
-              <v-icon small>receipt</v-icon>
-            </v-btn>
-            <span>Open the order in which this console was ordered</span>
-          </v-tooltip>
-          <v-btn icon small @click="openDestroyConsoleModal(props.item)">
-            <v-icon small color="error">delete</v-icon>
+        </v-layout>
+      </v-toolbar>
+    </template>
+    <template v-slot:item.user="{ item }">
+      <v-avatar size="20" class="mr-2">
+        <img :src="item.user.last_avatar" alt />
+      </v-avatar>
+      {{ item.user.last_username }}
+    </template>
+    <template v-slot:item.color="{ item }">
+      <span :style="'color:' + item.color">{{ item.color }}</span>
+    </template>
+    <template v-slot:item.created_at="{ item }">
+      <span>{{ item.created_at|subDate }}</span>
+    </template>
+    <template v-slot:item.actions="{ item }">
+      <v-btn icon small @click="viewConsoleDialog = true; toViewConsole = item">
+        <v-icon small>info</v-icon>
+      </v-btn>
+      <v-btn icon small @click="editConsole(item)">
+        <v-icon small>edit</v-icon>
+      </v-btn>
+      <v-tooltip top v-if="item.order !== null">
+        <template v-slot:activator="{ on }">
+          <v-btn v-on="on" icon small @click="$router.push({ name: 'ShopOrders', query: { id: item.order.id }})">
+            <v-icon small>receipt</v-icon>
           </v-btn>
-        </td>
-      </template>
-    </v-data-table>
-    <v-dialog v-model="viewConsoleDialog" max-width="500px">
-      <v-card>
-        <v-card-text>
-          <v-list two-line>
-            <v-list-tile @click="$copyText(toViewConsole.id)" ripple>
-              <v-list-tile-action>
-                <v-icon>label</v-icon>
-              </v-list-tile-action>
-              <v-list-tile-content>
-                <v-list-tile-title>{{toViewConsole.id}}</v-list-tile-title>
-                <v-list-tile-sub-title>API Id</v-list-tile-sub-title>
-              </v-list-tile-content>
-            </v-list-tile>
+        </template>
+        <span>Open the order in which this console was ordered</span>
+      </v-tooltip>
+      <v-btn icon small @click="openDestroyConsoleModal(item)">
+        <v-icon small color="error">delete</v-icon>
+      </v-btn>
+    </template>
+  </v-data-table>
+  <v-dialog v-model="viewConsoleDialog" max-width="500px">
+    <v-card>
+      <v-card-text>
+        <v-list two-line>
+          <v-list-item @click="$copyText(toViewConsole.id)" ripple>
+            <v-list-item-action>
+              <v-icon>label</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>{{toViewConsole.id}}</v-list-item-title>
+              <v-list-item-subtitle>API Id</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
 
-            <v-list-tile>
-              <v-list-tile-action />
-              <v-list-tile-content>
-                <v-list-tile-title :style="'color:' + toViewConsole.color">{{toViewConsole.color}}</v-list-tile-title>
-                <v-list-tile-sub-title>Color</v-list-tile-sub-title>
-              </v-list-tile-content>
-            </v-list-tile>
+          <v-list-item>
+            <v-list-item-action />
+            <v-list-item-content>
+              <v-list-item-title :style="'color:' + toViewConsole.color">{{toViewConsole.color}}</v-list-item-title>
+              <v-list-item-subtitle>Color</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
 
-            <v-list-tile>
-              <v-list-tile-action />
-              <v-list-tile-content>
-                <v-list-tile-title>{{toViewConsole.storage}}</v-list-tile-title>
-                <v-list-tile-sub-title>Storage (Gb)</v-list-tile-sub-title>
-              </v-list-tile-content>
-            </v-list-tile>
+          <v-list-item>
+            <v-list-item-action />
+            <v-list-item-content>
+              <v-list-item-title>{{toViewConsole.storage}}</v-list-item-title>
+              <v-list-item-subtitle>Storage (Gb)</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
 
-            <v-list-tile>
-              <v-list-tile-action />
-              <v-list-tile-content>
-                <v-list-tile-title>{{toViewConsole.version}}</v-list-tile-title>
-                <v-list-tile-sub-title>Version</v-list-tile-sub-title>
-              </v-list-tile-content>
-            </v-list-tile>
+          <v-list-item>
+            <v-list-item-action />
+            <v-list-item-content>
+              <v-list-item-title>{{toViewConsole.version}}</v-list-item-title>
+              <v-list-item-subtitle>Version</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
 
-            <v-divider inset></v-divider>
+          <v-divider inset></v-divider>
 
-            <create-update :item="toViewConsole" />
-            <v-tooltip top>
-              <v-list-tile slot="activator" ripple>
-                <v-list-tile-action />
-                <v-list-tile-content>
-                  <v-list-tile-title>
-                    <span
-                      v-if="toViewConsole.first_boot_at !== null"
-                    >{{ toViewConsole.first_boot_at | fromNow }}</span>
+          <create-update :item="toViewConsole" />
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-list-item ripple v-on="on">
+                <v-list-item-action />
+                <v-list-item-content>
+                  <v-list-item-title>
+                    <span v-if="toViewConsole.first_boot_at !== null">{{ toViewConsole.first_boot_at | fromNow }}</span>
                     <span v-if="toViewConsole.first_boot_at === null">Never</span>
-                  </v-list-tile-title>
-                  <v-list-tile-sub-title>First boot at</v-list-tile-sub-title>
-                </v-list-tile-content>
-              </v-list-tile>
-              <span v-if="toViewConsole.first_boot_at !== null">{{ toViewConsole.first_boot_at }}</span>
-              <span v-if="toViewConsole.first_boot_at === null">Never</span>
-            </v-tooltip>
-          </v-list>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn color="primary" flat @click.stop="viewConsoleDialog = false">Close</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <v-dialog v-model="addConsoleModal" max-width="500px">
-      <v-card>
-        <v-card-title>Manually add a console</v-card-title>
-        <v-card-text>
-          <v-form>
-            <v-text-field label="ID" v-model="toAddConsole.id" />
-            <v-select :items="colors" label="Color" v-model="toAddConsole.color"></v-select>
-            <v-select :items="storage" label="Size" v-model="toAddConsole.storage"></v-select>
-            <v-select :items="consoleVersions" label="Version" v-model="toAddConsole.version"></v-select>
-            <v-text-field label="User id" v-model="toAddConsole.user_id" />
-            <v-text-field label="Order id (optional)" v-model="toAddConsole.order_id" />
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn flat color="primary" @click="storeConsole()">Submit</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <v-dialog v-model="editConsoleModal" max-width="500px">
-      <v-card>
-        <v-card-title>Edit a console</v-card-title>
-        <v-card-text>
-          <v-form>
-            <v-text-field disabled label="ID" v-model="toEditConsole.id" />
-            <v-select :items="colors" label="Color" v-model="toEditConsole.color"></v-select>
-            <v-select :items="storage" label="Size" v-model="toEditConsole.storage"></v-select>
-            <v-select :items="consoleVersions" label="Version" v-model="toEditConsole.version"></v-select>
-            <v-text-field label="User id" v-model="toEditConsole.user_id" />
-            <v-text-field label="Order id" v-model="toEditConsole.order_id" />
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn flat color="primary" @click="updateConsole()">Save</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <v-dialog v-model="destroyConsoleModal" max-width="500px">
-      <v-card>
-        <v-card-title>DO YOU REALLY REALLY WANT DESTROY THIS FUCKING CONSOLE ??</v-card-title>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn flat color="error" @click="destroyConsole()">Yes</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </div>
+                  </v-list-item-title>
+                  <v-list-item-subtitle>First boot at</v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+            </template>
+            <span v-if="toViewConsole.first_boot_at !== null">{{ toViewConsole.first_boot_at }}</span>
+            <span v-if="toViewConsole.first_boot_at === null">Never</span>
+          </v-tooltip>
+        </v-list>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn color="primary" text @click.stop="viewConsoleDialog = false">Close</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+  <v-dialog v-model="addConsoleModal" max-width="500px">
+    <v-card>
+      <v-card-title>Manually add a console</v-card-title>
+      <v-card-text>
+        <v-form>
+          <v-text-field label="ID" v-model="toAddConsole.id" />
+          <v-select :items="colors" label="Color" v-model="toAddConsole.color"></v-select>
+          <v-select :items="storage" label="Size" v-model="toAddConsole.storage"></v-select>
+          <v-select :items="consoleVersions" label="Version" v-model="toAddConsole.version"></v-select>
+          <v-text-field label="User id" v-model="toAddConsole.user_id" />
+          <v-text-field label="Order id (optional)" v-model="toAddConsole.order_id" />
+        </v-form>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn text color="primary" @click="storeConsole()">Submit</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+  <v-dialog v-model="editConsoleModal" max-width="500px">
+    <v-card>
+      <v-card-title>Edit a console</v-card-title>
+      <v-card-text>
+        <v-form>
+          <v-text-field disabled label="ID" v-model="toEditConsole.id" />
+          <v-select :items="colors" label="Color" v-model="toEditConsole.color"></v-select>
+          <v-select :items="storage" label="Size" v-model="toEditConsole.storage"></v-select>
+          <v-select :items="consoleVersions" label="Version" v-model="toEditConsole.version"></v-select>
+          <v-text-field label="User id" v-model="toEditConsole.user_id" />
+          <v-text-field label="Order id" v-model="toEditConsole.order_id" />
+        </v-form>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn text color="primary" @click="updateConsole()">Save</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+  <v-dialog v-model="destroyConsoleModal" max-width="500px">
+    <v-card>
+      <v-card-title>DO YOU REALLY REALLY WANT DESTROY THIS FUCKING CONSOLE ??</v-card-title>
+      <v-card-actions>
+        <v-spacer />
+        <v-btn text color="error" @click="destroyConsole()">Yes</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+</div>
 </template>
 
 <script>
 export default {
-  data() {
-    return {
-      toViewConsole: {},
-      viewConsoleDialog: false,
-      consoles: [],
-      headers: [
-        {
-          text: "Id",
-          align: "left",
-          sortable: true,
-          value: "id"
-        },
-        {
-          text: "User",
-          align: "left",
-          sortable: false
-        },
-        {
-          text: "Storage",
-          align: "left",
-          sortable: false,
-          value: "storage"
-        },
-        {
-          text: "Color",
-          align: "left",
-          sortable: false,
-          value: "color"
-        },
-        {
-          text: "Created at",
-          align: "left",
-          sortable: true,
-          value: "created_at"
-        },
-        { text: "Actions", value: "id", sortable: false, align: "right" }
-      ],
-      addConsoleModal: false,
-      storage: [{ text: "16Gb", value: '16' }, { text: "32Gb", value: '32' }],
-      colors: [
-        { text: "Red", value: "#ff4c4c" },
-        { text: "Yellow", value: "#ffff66" },
-        { text: "Green", value: "#68ff66" },
-        { text: "Blue", value: "#6666ff" },
-        { text: "Black", value: "#4c4c4c" }
-      ],
-      toAddConsole: {
-        id: "",
-        storage: '16',
-        color: "#ff4c4c",
-        user_id: "",
-        order_id: ""
+  data: () => ({
+    toViewConsole: {},
+    viewConsoleDialog: false,
+    consoles: [],
+    headers: [
+      {
+        text: 'Id',
+        align: 'left',
+        sortable: true,
+        value: 'id'
       },
-      editConsoleModal: false,
-      toEditConsole: {},
-      destroyConsoleModal: false,
-      toDestroyConsole: {},
-      consoleVersions: []
-    };
-  },
-  methods: {
-    onMounted: function() {
-      this.fetchData();
+      {
+        text: 'User',
+        align: 'left',
+        value: 'user',
+        sortable: false
+      },
+      {
+        text: 'Storage',
+        align: 'left',
+        sortable: false,
+        value: 'storage'
+      },
+      {
+        text: 'Color',
+        align: 'left',
+        sortable: false,
+        value: 'color'
+      },
+      {
+        text: 'Created at',
+        align: 'left',
+        sortable: true,
+        value: 'created_at'
+      },
+      {
+        text: 'Actions',
+        value: 'actions',
+        sortable: false,
+        align: 'right'
+      }
+    ],
+    addConsoleModal: false,
+    storage: [{
+      text: '16Gb',
+      value: '16'
+    }, {
+      text: '32Gb',
+      value: '32'
+    }],
+    colors: [
+      {
+        text: 'Red',
+        value: '#ff4c4c'
+      },
+      {
+        text: 'Yellow',
+        value: '#ffff66'
+      },
+      {
+        text: 'Green',
+        value: '#68ff66'
+      },
+      {
+        text: 'Blue',
+        value: '#6666ff'
+      },
+      {
+        text: 'Black',
+        value: '#4c4c4c'
+      }
+    ],
+    toAddConsole: {
+      id: '',
+      storage: '16',
+      color: '#ff4c4c',
+      user_id: '',
+      order_id: ''
     },
-    fetchData: function() {
-      this.$store.commit("SET_LOADING", true);
+    editConsoleModal: false,
+    toEditConsole: {},
+    destroyConsoleModal: false,
+    toDestroyConsole: {},
+    consoleVersions: []
+  }),
+  methods: {
+    onMounted () {
+      this.fetchData()
+    },
+    fetchData () {
+      this.$store.commit('SET_LOADING', true)
       this.$apitator
         .query(this, {
           body: {
@@ -257,10 +280,10 @@ export default {
           }
         })
         .then(response => {
-          this.consoles = response.data.data.getManyConsoles;
-        });
+          this.consoles = response.data.data.getManyConsoles
+        })
     },
-    openAddConsoleModal: function() {
+    openAddConsoleModal () {
       this.$apitator
         .query(this, {
           body: {
@@ -273,13 +296,16 @@ export default {
         })
         .then(response => {
           this.consoleVersions = response.data.data.getConsoleVersions.map(version => {
-            return { value: version.id, text: version.id }
+            return {
+              value: version.id,
+              text: version.id
+            }
           })
           this.toAddConsole.version = this.consoleVersions[this.consoleVersions.length - 1].value
           this.addConsoleModal = true
         })
     },
-    storeConsole: function() {
+    storeConsole () {
       this.$apitator
         .query(this, {
           body: {
@@ -301,15 +327,15 @@ export default {
           }
         })
         .then(response => {
-          this.$store.commit("ADD_ALERT", {
-            color: "success",
-            text: "Created a console!"
-          });
-          this.addConsoleModal = false;
-          this.fetchData();
-        });
+          this.$store.commit('ADD_ALERT', {
+            color: 'success',
+            text: 'Created a console!'
+          })
+          this.addConsoleModal = false
+          this.fetchData()
+        })
     },
-    updateConsole: function() {
+    updateConsole () {
       this.$apitator
         .query(this, {
           body: {
@@ -329,16 +355,16 @@ export default {
           }
         })
         .then(response => {
-          this.$store.commit("ADD_ALERT", {
-            color: "success",
-            text: "Updated a console!"
-          });
-          this.editConsoleModal = false;
-          this.fetchData();
-        });
+          this.$store.commit('ADD_ALERT', {
+            color: 'success',
+            text: 'Updated a console!'
+          })
+          this.editConsoleModal = false
+          this.fetchData()
+        })
     },
-    editConsole: function(console) {
-      this.$store.commit("SET_LOADING", true);
+    editConsole (console) {
+      this.$store.commit('SET_LOADING', true)
       this.$apitator
         .query(this, {
           body: {
@@ -372,38 +398,39 @@ export default {
           }
         })
         .then(response => {
-          this.toEditConsole = response.data.data.getOneConsole;
-          this.toEditConsole.storage = response.data.data.getOneConsole.storage;
-          this.toEditConsole.user_id = response.data.data.getOneConsole.user.id;
-          this.toEditConsole.version = response.data.data.getOneConsole.version;
+          this.toEditConsole = response.data.data.getOneConsole
+          this.toEditConsole.storage = response.data.data.getOneConsole.storage
+          this.toEditConsole.user_id = response.data.data.getOneConsole.user.id
+          this.toEditConsole.version = response.data.data.getOneConsole.version
           this.consoleVersions = response.data.data.getConsoleVersions.map(version => {
-            return { value: version.id, text: version.id }
-          });
+            return {
+              value: version.id,
+              text: version.id
+            }
+          })
           if (response.data.data.getOneConsole.order !== null) {
-            this.toEditConsole.order_id = response.data.data.getOneConsole.order.id;
+            this.toEditConsole.order_id = response.data.data.getOneConsole.order.id
           }
-        });
-      this.editConsoleModal = true;
+        })
+      this.editConsoleModal = true
     },
-    openDestroyConsoleModal(item) {
+    openDestroyConsoleModal (item) {
       this.destroyConsoleModal = true
       this.toDestroyConsole = item
     },
-    destroyConsole() {
+    destroyConsole () {
       this.$apitator.query(this, {
         body: {
           query: `mutation($id: ID!){
             destroyConsole(id: $id)
           }`,
-          variables: {
-            id: this.toDestroyConsole.id
-          }
+          variables: { id: this.toDestroyConsole.id }
         }
       }).then((response) => {
         this.destroyConsoleModal = false
         this.$store.commit('ADD_ALERT', {
           color: 'info',
-          text: "Console destroyed!"
+          text: 'Console destroyed!'
         })
         this.fetchData()
       }).catch(() => {
@@ -411,9 +438,9 @@ export default {
       })
     }
   },
-  created() {
-    this.$store.commit("SET_TITLE", "Consoles");
-    this.$store.commit("SET_LAYOUT", "dashboard");
+  created () {
+    this.$store.commit('SET_TITLE', 'Consoles')
+    this.$store.commit('SET_LAYOUT', 'dashboard')
   }
-};
+}
 </script>
