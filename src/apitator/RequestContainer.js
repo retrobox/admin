@@ -17,9 +17,7 @@ export default class RequestContainer {
     } else {
       var headers = {}
     }
-    var params = merge(this.options.params, {
-      headers: headers
-    })
+    var params = {...this.options.params, headers }
     return new Promise((resolve, reject) => {
       if (options.loading === undefined) {
         VueLocal.$store.commit('SET_LOADING', true)
@@ -62,9 +60,7 @@ export default class RequestContainer {
       } else {
         var headers = {}
       }
-      var params = merge(_params, this.options.params, {
-        headers: headers
-      })
+      var params = { ..._params, ...this.options.params, headers }
       return axios.post(this.options.rootUrl + url, body, params)
         .then(response => {
           console.log('>>> success requestContainer post request <<<')
@@ -101,11 +97,11 @@ export default class RequestContainer {
       loading_type = params.loading_type
     }
     var access_token = VueLocal.$cookie.get('user_token')
-    var params = merge(params, this.options.params, {
-      headers: {
-        'Authorization': 'Bearer ' + access_token
-      }
-    })
+    var params = {
+      ...params,
+      ...this.options.params,
+      headers: { 'Authorization': 'Bearer ' + access_token }
+    }
     VueLocal.$store.commit('SET_LOADING_TYPE', loading_type)
     VueLocal.$store.commit('SET_LOADING', true)
     return new Promise((resolve, reject) => {
